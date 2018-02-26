@@ -1,19 +1,17 @@
-var slotmap = uia.shotmap('wafer2')
+var shotmap = uia.shotmap('wafer2')
   .wafer(200, 3, 9, 'bottom')
   .die(3.76, 3.74)
   .reticle(5, 6, 0.3, -9.81)
   .create()
-  .visiblity('wafer2_cross', 'hidden');
+  .visibility('wafer2_cross', 'hidden');
 
-var data = slotmap.data(49, 51)
+var data = shotmap.data(49, 51)
   .layer('1', layer1)
   .layer('2', layer2);
 
 data.layer('2').enabled(false);
 
-slotmap.bind(data, 1, 0);
-
-
+shotmap.bind(data, 1, 0);
 
 
 function layer1(r, c) {

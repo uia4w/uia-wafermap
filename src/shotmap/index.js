@@ -46,6 +46,6 @@ ShotMap.prototype = (function(){
     die: shotmap_die,
     reticle: shotmap_reticle,
     wafer: shotmap_wafer,
-    visiblity: shotmap_visibility
+    visibility: shotmap_visibility
   };
 }())
