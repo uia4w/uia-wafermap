@@ -1,0 +1,36 @@
+{
+    "name": "uia-wafermap",
+    "version": "0.1.0",
+    "description": "uia: wafermap",
+    "keywords": [
+        "wafermap",
+        "shotmap",
+        "data-join"
+    ],
+    "homepage": "https://github.com/uia4js/uia-wafermap",
+    "license":  "Apache-2.0",
+    "author": {
+        "name": "Kyle K. Lin",
+        "url": "https://github.com/gazer2kanlin"
+    },
+    "main": "dist/uia-wafermap.js",
+    "module": "index",
+    "jsnext:main": "index",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/uia4js/uia-wafermap.git"
+    },
+    "scripts": {
+        "pretest": "rm -rf dist && mkdir dist && rollup -c",
+        "test": "tape test/**/*-test.js && eslint index.js src"
+    },
+    "devDependencies": {
+        "eslint": "4",
+        "jsdom": "11",
+        "package-preamble": "0.1",
+        "rollup": "0.52",
+        "tape": "4",
+        "d3": "4",
+        "uglify-js": "3.2"
+    }
+}
