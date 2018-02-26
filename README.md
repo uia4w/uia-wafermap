@@ -6,7 +6,7 @@ var shotmap = uia.shotmap('id')           // element id
   .die(3.76, 3.74)                        // die size
   .reticle(5, 6, 0.3, -9.81)              // reticle size
   .create()                               // create shotmap
-  .visiblity('wafer2_cross', 'hidden');   // hide cross line
+  .visibility('wafer2_cross', 'hidden');  // hide cross line
 
 var data = shotmap.data(49, 51)           // create waferdata
   .layer('1', layer1)                     // add layer1
