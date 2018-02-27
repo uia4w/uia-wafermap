@@ -7,6 +7,7 @@ import * as d3 from "d3-selection";
 export default function() {
   d3.select('#' + this.id() + '_dies')
     .selectAll('rect')
+    .transition().duration(1000)
     .attr('fill', function(d) { return pickColor(d); });
 }
 

@@ -23,6 +23,26 @@ export default function() {
     .attr('width', w)
     .attr('height', h);
 
+  // shadow
+  var defs = this.svg.append("defs");
+  var filter = defs.append("filter")
+    .attr("id", "drop-shadow")
+    .attr("height", "130%");
+  filter.append("feGaussianBlur")
+    .attr("in", "SourceAlpha")
+    .attr("stdDeviation", 5)
+    .attr("result", "blur");
+  filter.append("feOffset")
+    .attr("in", "blur")
+    .attr("dx", 5)
+    .attr("dy", 5)
+    .attr("result", "offsetBlur");
+  var feMerge = filter.append("feMerge");
+  feMerge.append("feMergeNode")
+    .attr("in", "offsetBlur")
+  feMerge.append("feMergeNode")
+    .attr("in", "SourceGraphic");
+
   // circle
   var d = this.diameter * this.zoom;
   var m = this.margin * this.zoom;
@@ -32,6 +52,7 @@ export default function() {
   var cy = r + rth;
   // circle: wafer
   this.svg.append('circle')
+    .style("filter", "url(#drop-shadow)")
     .attr('cx', cx)
     .attr('cy', cy)
     .attr('r', r)
