@@ -1,3 +1,7 @@
+/**
+ * setup wafer infomration.
+ *
+ */
 export default function(diameter, margin, notch, notchSide) {
   this.diameter = diameter;
   this.margin = margin;

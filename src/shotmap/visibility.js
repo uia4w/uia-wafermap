@@ -1,4 +1,13 @@
+/**
+ * set/get visibility.
+ *
+ */
 export default function(g, v) {
-  this.svg.select('#' + g).attr('visibility', v);
-  return this;
+  if(v === undefined) {
+    return this.svg.select('#' + g).attr('visibility');
+  }
+  else {
+    this.svg.select('#' + g).attr('visibility', v);
+    return this;
+  }
 }

@@ -2,10 +2,15 @@ import shotmap_bind from "./bind";
 import shotmap_create from "./create";
 import shotmap_data from "./data";
 import shotmap_die from "./die";
+import shotmap_draw from "./draw";
 import shotmap_reticle from "./reticle";
 import shotmap_wafer from "./wafer";
 import shotmap_visibility from "./visibility";
 
+/**
+ * new ShotMap object.
+ *
+ */
 export default function shotmap(elementId, zoom) {
   return new ShotMap(elementId, zoom);
 }
@@ -44,6 +49,7 @@ ShotMap.prototype = (function(){
     create: shotmap_create,
     data: shotmap_data,
     die: shotmap_die,
+    draw: shotmap_draw,
     reticle: shotmap_reticle,
     wafer: shotmap_wafer,
     visibility: shotmap_visibility

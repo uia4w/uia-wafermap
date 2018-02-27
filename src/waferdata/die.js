@@ -1,33 +1,42 @@
 export default function(r, c) {
-  var die = new Die(r, c);
-  var len = this.layers.length;
-  for(var i = 0; i < len; i++) {
-    var layer = this.layers[i];
-    if(layer.enabled()) {
-      die.mark(layer.value(r, c).grade);
-    }
-  }
-  return die;
+  return new Die(this, r, c);
 }
 
-function Die(r, c) {
+function Die(data, r, c) {
+  this.data = data;
   this.x = c;
   this.y = r;
-  this.grade = undefined;
+  this.grade = function() {
+    return grading(this.data, this.x, this.y);
+  };
+}
+
+function grading(data, x, y) {
+  var grade = undefined;
+
+  var len = data.layers.length;
+  for(var i = 0; i < len; i++) {
+    var _layer = data.layers[i];
+    if(_layer.enabled()) {
+      var _die = _layer.value(x, y);
+      if(_die) {
+        var _grade = _die.grade;
+        if(grade === 'f' || _grade === 'f') {
+          grade = 'f';
+        }
+        else if(_grade === 'd' || _grade === 'e' || _grade === 'g') {
+          grade = _grade;
+        }
+        else if(_grade && grade !== 'd' && grade !== 'e' && grade !== 'g') {
+          grade = _grade;
+        }
+      }
+    }
+  }
+
+  return grade;
 }
 
 Die.prototype = {
   constructor: Die,
-  mark: function(grade) {
-    if(this.grade == 'f' || grade == 'f') {
-      this.grade = 'f';
-    }
-    else if(grade == 'd' || grade == 'e' || grade == 'g') {
-      this.grade = grade;
-    }
-    else if(grade && this.grade != 'd' && this.grade != 'e' && this.grade != 'g') {
-      this.grade = grade;
-    }
-    return this;
-  }
 }

@@ -33,6 +33,10 @@ function Layer(wafer, id, value) {
 Layer.prototype = {
   constructor: Layer,
   value: function(r, c, v) {
+    if(r >= this.dies.length || c >= this.dies[r].length) {
+      return v === undefined ? undefined : this;
+    }
+
     if(v === undefined) {
       return this.dies[r][c];
     }

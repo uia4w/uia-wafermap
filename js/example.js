@@ -9,10 +9,8 @@ var data = shotmap.data(49, 51)
   .layer('1', layer1)
   .layer('2', layer2);
 
-data.layer('2').enabled(false);
-
-shotmap.bind(data, 1, 0);
-
+shotmap.bind(data, 1, 0)
+  .draw();
 
 function layer1(r, c) {
   var _grade = undefined;
@@ -32,4 +30,13 @@ function layer2(r, c) {
   }
 
   return { x: c, y: r, grade: _grade };
+}
+
+function changeVisibility(id, visible) {
+  shotmap.visibility(id, visible ? 'visible' : 'hidden');
+}
+
+function bind(id, enabled) {
+  data.layer(id).enabled(enabled);
+  shotmap.draw();
 }

@@ -1,3 +1,7 @@
+/**
+ * setup reticle size and position.
+ *
+ */
 export default function(dx, dy, ox, oy) {
   this.diesX = dx;
   this.diesY = dy;

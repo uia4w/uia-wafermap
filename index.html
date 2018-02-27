@@ -8,9 +8,13 @@
 </head>
 <body>
 	<p>wafer map</p>
-	<section id="wafer1"></section>
+	<input type="checkbox" onchange="changeVisibility('wafer2_cross', this.checked);">cross line
+	<input type="checkbox" checked onchange="changeVisibility('wafer2_reticles', this.checked);">reticles
+	<input type="checkbox" checked onchange="changeVisibility('wafer2_dies', this.checked);">dies
+	<input type="checkbox" checked onchange="bind('1', this.checked);">layer1
+	<input type="checkbox" checked onchange="bind('2', this.checked);">layer2
+
 	<section id="wafer2"></section>
-	<section id="wafer3"></section>
 
 	<script src="node_modules/d3-selection/dist/d3-selection.min.js"></script>
   <script src="dist/uia-wafermap.js"></script>

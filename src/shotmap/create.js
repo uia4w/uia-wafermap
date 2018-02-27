@@ -1,5 +1,9 @@
 import * as d3 from "d3-selection";
 
+/**
+ * create shotmap without data
+ *
+ */
 export default function() {
   // width/height: die
   var dw = this.dieWidth * this.zoom;
@@ -139,17 +143,22 @@ export default function() {
 function updateDie() {
   var rect = d3.select(this)
     .attr('visibility', 'visible');
+  var die = rect.datum();
   if(rect.attr('fill') == 'lightgray') {
     rect.attr('fill', 'green');
+    die.grade = 'bin';
   }
   if(rect.attr('fill') == 'green') {
     rect.attr('fill', 'yellow');
+    die.grade = 'd';
   }
   else if(rect.attr('fill') == 'yellow') {
     rect.attr('fill', 'red');
+    die.grade = 'f';
   }
   else {
     rect.attr('fill', 'lightgray');
+    die.grade = undefined;
   }
 }
 
