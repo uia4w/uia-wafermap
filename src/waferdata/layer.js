@@ -6,20 +6,19 @@ export default function(id, value) {
     return found;
   }
   else {
-    this.layers.push(new Layer(this, id, value));
+    this.layers.push(new Layer(id, this.rows, this.cols, value));
     return this;
   }
 }
 
-function Layer(wafer, id, value) {
+export function Layer(id, rows, cols, value) {
   this.id = id;
   this.on = true;
-  this.dies = new Array(wafer.rows);
+  this.dies = new Array(rows);
   // dies
-  for(var r = 0; r < wafer.rows; r++) {
-    this.dies[r] = new Array(wafer.cols);
-    for(var c = 0; c < wafer.cols; c++) {
-      this.dies[r][c] = value;
+  for(var r = 0; r < rows; r++) {
+    this.dies[r] = new Array(cols);
+    for(var c = 0; c < cols; c++) {
       if (typeof value === "function") {
         this.dies[r][c] = value(r, c);
       }
@@ -33,11 +32,11 @@ function Layer(wafer, id, value) {
 Layer.prototype = {
   constructor: Layer,
   value: function(r, c, v) {
-    if(r >= this.dies.length || c >= this.dies[r].length) {
-      return v === undefined ? undefined : this;
+    if(this.dies.length === 0 || r >= this.dies.length || c >= this.dies[r].length) {
+      return v === undefined ? this : undefined;
     }
 
-    if(v === undefined) {
+    if(arguments.length === 2) {
       return this.dies[r][c];
     }
     else {

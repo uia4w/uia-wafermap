@@ -8,6 +8,7 @@ export default function() {
   d3.select('#' + this.id() + '_dies')
     .selectAll('rect')
     .transition().duration(1000)
+		.attr('class', 'die')
     .attr('fill', function(d) { return pickColor(d); });
 }
 

@@ -13,12 +13,12 @@ shotmap.bind(data, 1, 0)
   .draw();
 
 function layer1(r, c) {
-  var _grade = undefined;
   if((24 - r) * (24 - r) + (24 - c) * (24 - c) < 625) {
-    _grade = 'a'
-  }
-
-  return { x: c, y: r, grade: _grade };
+		return 'a';
+	}
+	else {
+		return undefined;
+	}
 }
 
 function layer2(r, c) {
@@ -28,8 +28,7 @@ function layer2(r, c) {
     if(r % 10 == 0) _grade = 'e';
     if((r + c) % 11 == 0) _grade = 'f';
   }
-
-  return { x: c, y: r, grade: _grade };
+	return _grade;
 }
 
 function changeVisibility(id, visible) {

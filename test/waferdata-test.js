@@ -3,28 +3,32 @@ var tape = require("tape"),
     d3 = require("d3-selection"),
     uia = require("../");
 
-tape("uia.waferdata: all layer visible", function(test) {
+tape("uia.waferdata: layer enabled", function(test) {
   var waferdata = uia.waferdata(51, 49)
-    .layer('1', function(r, c) { return { x: c, y: r, grade: 'd' }; })
-    .layer('2', function(r, c) { return { x: c, y: r, grade: 'a' }; });
+    .layer('1', function(r, c) { return 'a'; })
+    .layer('2', function(r, c) { return 'd'; });
 
-  console.log(waferdata.layer('1').value(1, 1));
-  console.log(waferdata.layer('2').value(1, 1));
-  console.log(waferdata.die(1, 1));
+	test.equal('d', waferdata.die(2, 1).grade());
+
+  waferdata.layer('2').enabled(false);
+	test.equal('a', waferdata.die(2, 1).grade());
 
   test.end();
 });
 
-tape("uia.waferdata: 2nd layer visible", function(test) {
-  var waferdata = uia.waferdata(51, 49)
-    .layer('1', function(r, c) { return { x: c, y: r, grade: 'd' }; })
-    .layer('2', function(r, c) { return { x: c, y: r, grade: 'a' }; });
 
-  waferdata.layer('1').enabled(false);
+tape("uia.waferdata: _layer update", function(test) {
+  var waferdata = uia.waferdata(5, 6)
+    .layer('1', function(r, c) { return 'd'; });
 
-  console.log(waferdata.layer('1').value(1, 1));
-  console.log(waferdata.layer('2').value(1, 1));
-  console.log(waferdata.die(1, 1));
+	var die = waferdata.die(1, 2);
+	test.equal('d', die.grade());
 
+	die.grade('f');
+	test.equal('f', die.grade());
+
+	die.grade(undefined);
+	test.equal('d', die.grade());
+	
   test.end();
 });
