@@ -7,7 +7,8 @@ var shotmap = uia.shotmap('wafer2')
 
 var data = shotmap.data(49, 51)
   .layer('1', sampleLayer1)
-  .layer('2', sampleLayer2);
+  .layer('2', sampleLayer2)
+  .layer('3', sampleLayer3);
 
 shotmap.bind(data, 1, 0)
   .draw();
@@ -24,12 +25,7 @@ function sampleLayer1(r, c) {
     _grade = 'a'
   }
 
-  /**
-   * x: column index
-   * y: row index
-   * grade: grade mark, free input
-   */
-  return { x: c, y: r, grade: _grade };
+  return _grade;
 }
 
 /**
@@ -46,12 +42,23 @@ function sampleLayer2(r, c) {
     if((r + c) % 11 == 0) _grade = 'f';
   }
 
+  return _grade;
+}
+
+
+/**
+ * sample data
+ * @param {string} r The row of the die
+ * @param {object} c The column of the die
+ * @return Information of one die.
+ */
+function sampleLayer3(r, c) {
   /**
    * x: column index
    * y: row index
    * grade: grade mark, free input
    */
-  return { x: c, y: r, grade: _grade };
+  return "f";
 }
 
 function changeVisibility(id, visible) {

@@ -11,26 +11,32 @@ function Die(data, r, c) {
   this.data = data;
   this.x = c;
   this.y = r;
-  this.grade = function() {
-    return grading(this.data, this.x, this.y);
+  this.grade = undefined,
+  this.testResult = function() {
+    return this.grade !== undefined
+        ? this.grade
+        : testing(this.data, this.x, this.y);
   };
+
+
 }
 
 /**
  * merge the grade of all layers.
- * @param {int} x The x
- * @param {int} y The y
+ * @param {WaferData} data The wafer data.
+ * @param {int} x The x.
+ * @param {int} y The y.
+ * @return {string} The grade.
  */
-function grading(data, x, y) {
+function testing(data, x, y) {
   var grade = undefined;
 
   var len = data.layers.length;
   for(var i = 0; i < len; i++) {
     var _layer = data.layers[i];
     if(_layer.enabled()) {
-      var _die = _layer.value(x, y);
-      if(_die) {
-        var _grade = _die.grade;
+      var _grade = _layer.value(x, y);
+      if(_grade) {
         if(grade === 'f' || _grade === 'f') {
           grade = 'f';
         }
