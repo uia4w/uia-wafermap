@@ -2,7 +2,9 @@ import * as d3 from "d3-selection";
 
 /**
  * bind data to elements
- *
+ * @param {WaferData} data Information of all dies
+ * @param {int} x0 Offset x
+ * @param {int} y0 Offset y
  */
 export default function(data, x0, y0) {
   // offset x

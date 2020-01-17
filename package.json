@@ -7,8 +7,8 @@
         "shotmap",
         "data-join"
     ],
-    "homepage": "https://github.com/uia4js/uia-wafermap",
-    "license":  "Apache-2.0",
+    "homepage": "https://github.com/uia4w/uia-wafermap",
+    "license": "Apache-2.0",
     "author": {
         "name": "Kyle K. Lin",
         "url": "https://github.com/gazer2kanlin"
@@ -18,20 +18,24 @@
     "jsnext:main": "index",
     "repository": {
         "type": "git",
-        "url": "https://github.com/uia4js/uia-wafermap.git"
+        "url": "https://github.com/uia4w/uia-wafermap.git"
     },
     "scripts": {
-        "pretest": "rm -rf dist && mkdir dist && rollup -c",
+        "build": "rm -rf dist && mkdir dist && rollup -c",
         "test": "tape test/**/*-test.js && eslint index.js src"
+    },
+    "dependencies": {
+        "d3": "4.12.2",
+        "d3-selection": "1.3.0",
+        "d3-transition": "1.1.1"
     },
     "devDependencies": {
         "eslint": "4",
         "jsdom": "11",
         "package-preamble": "0.1",
-        "rollup": "0.52",
+        "rollup": "1.29",
+        "rollup-plugin-node-resolve": "5.2.0",
         "tape": "4",
-        "d3-selection": "1.3.0",
-        "d3-transition": "1.1.1",
         "uglify-js": "3.2"
     }
 }

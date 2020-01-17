@@ -8,7 +8,7 @@ export default {
     extend: true,
     file: `dist/${definition.name}.js`,
     format: "umd",
-    globals: dependencies.reduce((p, v) => (p[v] = "uia", p), {}),
+    globals: { "d3-selection": "d3" },
     name: "uia"
   }
 };

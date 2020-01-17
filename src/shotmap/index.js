@@ -9,12 +9,17 @@ import shotmap_visibility from "./visibility";
 
 /**
  * new ShotMap object.
- *
+ * @param {string} The id.
+ * @param {int} zoom Zoom size, optional, default is 3.
  */
 export default function shotmap(elementId, zoom) {
   return new ShotMap(elementId, zoom);
 }
 
+/**
+ * @param {string} The id.
+ * @param {int} zoom Zoom size, optional, default is 3.
+ */
 function ShotMap(id, zoom) {
   var _id = id;
   this.zoom = zoom ? zoom : 3;

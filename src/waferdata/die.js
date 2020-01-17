@@ -2,6 +2,11 @@ export default function(r, c) {
   return new Die(this, r, c);
 }
 
+/**
+ * @param {object} data
+ * @param {int} r The row index.
+ * @param {int} c The column index.
+ */
 function Die(data, r, c) {
   this.data = data;
   this.x = c;
@@ -11,6 +16,11 @@ function Die(data, r, c) {
   };
 }
 
+/**
+ * merge the grade of all layers.
+ * @param {int} x The x
+ * @param {int} y The y
+ */
 function grading(data, x, y) {
   var grade = undefined;
 

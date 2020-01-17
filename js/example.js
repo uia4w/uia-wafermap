@@ -6,22 +6,39 @@ var shotmap = uia.shotmap('wafer2')
   .visibility('wafer2_cross', 'hidden');
 
 var data = shotmap.data(49, 51)
-  .layer('1', layer1)
-  .layer('2', layer2);
+  .layer('1', sampleLayer1)
+  .layer('2', sampleLayer2);
 
 shotmap.bind(data, 1, 0)
   .draw();
 
-function layer1(r, c) {
+/**
+ * sample data
+ * @param {string} r The row of the die
+ * @param {object} c The column of the die
+ * @return Information of one die.
+ */
+function sampleLayer1(r, c) {
   var _grade = undefined;
   if((24 - r) * (24 - r) + (24 - c) * (24 - c) < 625) {
     _grade = 'a'
   }
 
+  /**
+   * x: column index
+   * y: row index
+   * grade: grade mark, free input
+   */
   return { x: c, y: r, grade: _grade };
 }
 
-function layer2(r, c) {
+/**
+ * sample data
+ * @param {string} r The row of the die
+ * @param {object} c The column of the die
+ * @return Information of one die.
+ */
+function sampleLayer2(r, c) {
   var _grade = undefined;
   if((24 - r) * (24 - r) + (24 - c) * (24 - c) < 625) {
     _grade = 'a';
@@ -29,6 +46,11 @@ function layer2(r, c) {
     if((r + c) % 11 == 0) _grade = 'f';
   }
 
+  /**
+   * x: column index
+   * y: row index
+   * grade: grade mark, free input
+   */
   return { x: c, y: r, grade: _grade };
 }
 
