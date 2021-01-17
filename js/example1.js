@@ -1,8 +1,8 @@
 var shotmap = uia.shotmap('wafer2')
-  .wafer(200, 3, 9, 'bottom')
+  .wafer(200, 3, 9, 'left')
   .die(3.76, 3.74)
   .reticle(5, 6, 0.3, -9.81)
-  .create()
+  .create(true)
   .visibility('wafer2_cross', 'hidden');
 
 var data = shotmap.data(49, 51)
@@ -66,6 +66,11 @@ function changeVisibility(id, visible) {
 }
 
 function bind(id, enabled) {
+  data.layer(id).enabled(enabled);
+  shotmap.draw();
+}
+
+function bindPalette(id, enabled) {
   data.layer(id).enabled(enabled);
   shotmap.draw();
 }

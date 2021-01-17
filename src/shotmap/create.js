@@ -2,9 +2,10 @@ import * as d3 from "d3-selection";
 
 /**
  * create shotmap without data
- *
+ * 
+ * @param {boolean} diesGrid Draw grid line of dies.
  */
-export default function() {
+export default function(diesGrid) {
 	// width/height: die
 	var dw = this.dieWidth * this.zoom;
 	var dh = this.dieHeight * this.zoom;
@@ -77,6 +78,7 @@ export default function() {
 	var dy1 = dy0 + Math.floor((cy + rm - dy0) / dh) * dh;
 
 	this.svg.append("rect")
+		.attr('id', this.id() + '_rect_area')
 		.attr('x', dx0)
 		.attr('y', dy0)
 		.attr('width', dx1 - dx0)
@@ -112,9 +114,13 @@ export default function() {
 				.on("click", updateDie);
 
 			if(inside(dx, dy, dw, dh, cx, cy, rm) && flat(dx, dy, dw, dh, flatL, flatR, flatT, flatB)) {
-				rect.attr('stroke', 'darkgray')
-					.attr('stroke-width', 1)
-					.attr('fill', 'lightgray');
+				if(diesGrid) {
+					rect.attr('stroke-width', 1).attr('stroke', 'darkgray')
+				}
+				else {
+					rect.attr('stroke-width', 0)
+				}
+				rect.attr('fill', 'lightgray');
 			}
 			else {
 				rect.attr('visibility', 'hidden');
@@ -166,24 +172,26 @@ export default function() {
 
 function updateDie() {
 	var rect = d3.select(this)
-		.attr('visibility', 'visible');
+		// .attr('visibility', 'visible');
+
+	var color = "none";
 	var die = rect.datum();
-	if(rect.attr('fill') === 'lightgray') {
-		rect.attr('fill', 'green');
-		die.grade = 'bin';
-	}
-	if(rect.attr('fill') === 'green') {
-		rect.attr('fill', 'yellow');
+	if(die.grade === 'bin') {
 		die.grade = 'd';
-	}
-	else if(rect.attr('fill') === 'yellow') {
-		rect.attr('fill', 'red');
+		color = "yellow";
+	} else if(die.grade === 'd') {
 		die.grade = 'f';
-	}
-	else {
-		rect.attr('fill', 'lightgray');
+		color = "red";
+	} else if(die.grade === 'f') {
 		die.grade = undefined;
+		color = "white";
+	} else {
+		die.grade = "bin";
+		color = "rgb(0,212,0)";
 	}
+
+	rect.attr('fill', color);	
+	// rect.attr('fill', this.diePalette()(die.grade));	// this is not correct
 }
 
 function inside(x, y, w, h, cx, cy, r) {

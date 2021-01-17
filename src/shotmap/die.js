@@ -1,5 +1,6 @@
 /**
- * setup die size.
+ * sets die size.
+ * 
  * @param {int} w The width.
  * @param {int} h The height.
  */

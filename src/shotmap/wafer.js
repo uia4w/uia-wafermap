@@ -1,9 +1,10 @@
 /**
- * setup wafer infomration.
- * @param {int} diameter
- * @param {int} margin
- * @param {int} notch
- * @param {int} notchSide
+ * sets wafer information.
+ * 
+ * @param {int} diameter The size.
+ * @param {int} margin The margin size.
+ * @param {int} notch The notch width.
+ * @param {int} notchSide The notch position.
  */
 export default function(diameter, margin, notch, notchSide) {
   this.diameter = diameter;

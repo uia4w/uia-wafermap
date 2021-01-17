@@ -138,7 +138,8 @@
   };
 
   /**
-   * bind data to elements
+   * binds data to elements
+   * 
    * @param {WaferData} data Information of all dies
    * @param {int} x0 Offset x
    * @param {int} y0 Offset y
@@ -164,9 +165,10 @@
 
   /**
    * create shotmap without data
-   *
+   * 
+   * @param {boolean} diesGrid Draw grid line of dies.
    */
-  function shotmap_create() {
+  function shotmap_create(diesGrid) {
   	// width/height: die
   	var dw = this.dieWidth * this.zoom;
   	var dh = this.dieHeight * this.zoom;
@@ -239,6 +241,7 @@
   	var dy1 = dy0 + Math.floor((cy + rm - dy0) / dh) * dh;
 
   	this.svg.append("rect")
+  		.attr('id', this.id() + '_rect_area')
   		.attr('x', dx0)
   		.attr('y', dy0)
   		.attr('width', dx1 - dx0)
@@ -274,9 +277,13 @@
   				.on("click", updateDie);
 
   			if(inside(dx, dy, dw, dh, cx, cy, rm) && flat(dx, dy, dw, dh, flatL, flatR, flatT, flatB)) {
-  				rect.attr('stroke', 'darkgray')
-  					.attr('stroke-width', 1)
-  					.attr('fill', 'lightgray');
+  				if(diesGrid) {
+  					rect.attr('stroke-width', 1).attr('stroke', 'darkgray');
+  				}
+  				else {
+  					rect.attr('stroke-width', 0);
+  				}
+  				rect.attr('fill', 'lightgray');
   			}
   			else {
   				rect.attr('visibility', 'hidden');
@@ -327,25 +334,27 @@
   }
 
   function updateDie() {
-  	var rect = d3.select(this)
-  		.attr('visibility', 'visible');
+  	var rect = d3.select(this);
+  		// .attr('visibility', 'visible');
+
+  	var color = "none";
   	var die = rect.datum();
-  	if(rect.attr('fill') === 'lightgray') {
-  		rect.attr('fill', 'green');
-  		die.grade = 'bin';
-  	}
-  	if(rect.attr('fill') === 'green') {
-  		rect.attr('fill', 'yellow');
+  	if(die.grade === 'bin') {
   		die.grade = 'd';
-  	}
-  	else if(rect.attr('fill') === 'yellow') {
-  		rect.attr('fill', 'red');
+  		color = "yellow";
+  	} else if(die.grade === 'd') {
   		die.grade = 'f';
-  	}
-  	else {
-  		rect.attr('fill', 'lightgray');
+  		color = "red";
+  	} else if(die.grade === 'f') {
   		die.grade = undefined;
+  		color = "white";
+  	} else {
+  		die.grade = "bin";
+  		color = "rgb(0,212,0)";
   	}
+
+  	rect.attr('fill', color);	
+  	// rect.attr('fill', this.diePalette()(die.grade));	// this is not correct
   }
 
   function inside(x, y, w, h, cx, cy, r) {
@@ -377,7 +386,8 @@
   }
 
   /**
-   * create wafer data.
+   * creates empty data of the wafer.
+   * 
    * @param {int} rows The row count.
    * @param {int} cols The column count.
    * @return {WaferData} The wafer data.
@@ -387,7 +397,8 @@
   }
 
   /**
-   * setup die size.
+   * sets die size.
+   * 
    * @param {int} w The width.
    * @param {int} h The height.
    */
@@ -398,43 +409,60 @@
   }
 
   /**
-   * draw shotmap with data.
+   * DiePalette property.
+   * 
+   * @param {function} colorPicker A function to provide the color depending on the grade of the die.
+   */
+  function shotmap_die_palette(pickerFunc) {
+      if(pickerFunc === undefined) {
+          return this.colorPicker || defaultColorPicker;
+      } else {
+          this.colorPicker = pickerFunc;
+          return this;
+      }
+    }
+    
+    function defaultColorPicker(grade) {
+      if(grade === 'd') {
+        return "yellow";
+      }
+      if(grade === 'e') {
+        return "yellow";
+      }
+      if(grade === 'f') {
+        return "red";
+      }
+      if(grade === 'g') {
+        return "yellow";
+      }
+      if(grade === undefined) {
+        return 'none';
+      }
+      return 'green';
+    }
+
+  /**
+   * draws shotmap with data.
    *
    */
   function shotmap_draw() {
+    var self = this;
     d3.select('#' + this.id() + '_dies')
       .selectAll('rect')
       .transition().duration(1000)
   		.attr('class', 'die')
-      .attr('fill', function(d) { return pickColor(d); });
-  }
-
-  function pickColor(d) {
-    if(d === undefined) {
-      return 'none';
-    }
-
-    var grade = d.testResult();
-    if(grade === 'd') {
-      return "yellow";
-    }
-    if(grade === 'e') {
-      return "yellow";
-    }
-    if(grade === 'f') {
-      return "red";
-    }
-    if(grade === 'g') {
-      return "yellow";
-    }
-    if(grade === undefined) {
-      return 'none';
-    }
-    return 'green';
+      .attr('fill', function(d) { 
+        if(d === undefined) {
+          return 'none';
+        } else {
+          return self.diePalette()(d.testResult());
+        }
+      });
   }
 
   /**
-   * setup reticle size and position.
+   * Sets reticle size and position.
+   * 
    * @param {int} dx The count of dies in one row.
    * @param {int} dy The count of dies in one column.
    * @param {float} ox The offset x.
@@ -449,11 +477,12 @@
   }
 
   /**
-   * setup wafer infomration.
-   * @param {int} diameter
-   * @param {int} margin
-   * @param {int} notch
-   * @param {int} notchSide
+   * sets wafer information.
+   * 
+   * @param {int} diameter The size.
+   * @param {int} margin The margin size.
+   * @param {int} notch The notch width.
+   * @param {int} notchSide The notch position.
    */
   function shotmap_wafer(diameter, margin, notch, notchSide) {
     this.diameter = diameter;
@@ -464,21 +493,25 @@
   }
 
   /**
-   * set/get visibility.
+   * visibility property.
    *
    */
   function shotmap_visibility(g, v) {
+    var elem = this.svg.select('#' + g);
     if(v === undefined) {
-      return this.svg.select('#' + g).attr('visibility');
+      return elem ? elem.attr('visibility') : undefined;
     }
     else {
-      this.svg.select('#' + g).attr('visibility', v);
+      if(elem) {
+        elem.attr('visibility', v);
+      }
       return this;
     }
   }
 
   /**
    * new ShotMap object.
+   * 
    * @param {string} The id.
    * @param {int} zoom Zoom size, optional, default is 3.
    */
@@ -487,6 +520,8 @@
   }
 
   /**
+   * The constructor.
+   * 
    * @param {string} The id.
    * @param {int} zoom Zoom size, optional, default is 3.
    */
@@ -524,6 +559,7 @@
       create: shotmap_create,
       data: shotmap_data,
       die: shotmap_die,
+      diePalette: shotmap_die_palette,
       draw: shotmap_draw,
       reticle: shotmap_reticle,
       wafer: shotmap_wafer,

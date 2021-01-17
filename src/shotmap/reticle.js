@@ -1,5 +1,6 @@
 /**
- * setup reticle size and position.
+ * Sets reticle size and position.
+ * 
  * @param {int} dx The count of dies in one row.
  * @param {int} dy The count of dies in one column.
  * @param {float} ox The offset x.

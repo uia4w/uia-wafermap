@@ -1,7 +1,8 @@
 import waferdata from '../waferdata/index';
 
 /**
- * create wafer data.
+ * creates empty data of the wafer.
+ * 
  * @param {int} rows The row count.
  * @param {int} cols The column count.
  * @return {WaferData} The wafer data.

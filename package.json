@@ -1,7 +1,11 @@
 {
     "name": "uia-wafermap",
     "version": "0.1.0",
-    "description": "uia: wafermap",
+    "description": "wafermap",
+    "main": "dist/uia-wafermap.js",
+    "unpkg": "dist/uia-wafermap.min.js",
+    "jsnext:main": "index",
+    "module": "index",
     "keywords": [
         "wafermap",
         "shotmap",
@@ -13,16 +17,14 @@
         "name": "Kyle K. Lin",
         "url": "https://github.com/gazer2kanlin"
     },
-    "main": "dist/uia-wafermap.js",
-    "module": "index",
-    "jsnext:main": "index",
     "repository": {
         "type": "git",
         "url": "https://github.com/uia4w/uia-wafermap.git"
     },
     "scripts": {
-        "build": "rm -rf dist && mkdir dist && rollup -c",
-        "test": "tape test/**/*-test.js && eslint index.js src"
+        "build": "rollup -c",
+        "test": "tape test/**/*-test.js",
+        "eslint": "eslint src"
     },
     "dependencies": {
         "d3": "4.12.2",
@@ -30,11 +32,13 @@
         "d3-transition": "1.1.1"
     },
     "devDependencies": {
-        "eslint": "4",
+        "eslint": "^6.8.0",
         "jsdom": "11",
         "package-preamble": "0.1",
         "rollup": "1.29",
-        "rollup-plugin-node-resolve": "5.2.0",
+        "rollup-plugin-node-builtins": "^2.1.2",
+        "rollup-plugin-terser": "5",
+        "@rollup/plugin-node-resolve": "^11.1.0",
         "tape": "4",
         "uglify-js": "3.2"
     }
