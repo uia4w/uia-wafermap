@@ -35,7 +35,7 @@ function testing(data, x, y) {
   for(var i = 0; i < len; i++) {
     var _layer = data.layers[i];
     if(_layer.enabled()) {
-      var _grade = _layer.value(x, y);
+      var _grade = _layer.value(y, x);
       if(_grade) {
         if(grade === 'f' || _grade === 'f') {
           grade = 'f';
