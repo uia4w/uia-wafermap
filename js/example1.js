@@ -1,76 +1,35 @@
 var shotmap = uia.shotmap('wafer2')
-  .wafer(200, 3, 9, 'left')
-  .die(3.76, 3.74)
-  .reticle(5, 6, 0.3, -9.81)
-  .create(true)
-  .visibility('wafer2_cross', 'hidden');
+    .wafer(200, 3)
+    .notch("down", 2)
+    .attachClick(function(oEvent) {
+      alert(oEvent.pick());
+    })
+    .diePalette(function(result) {
+      switch(result) {
+        case 0:
+          return 0x00ff00;
+        case 1:
+          return 0x0000ff;
+        default:
+          return 0xff0000;
+      }
+    })
 
-var data = shotmap.data(49, 51)
-  .layer('1', sampleLayer1)
-  .layer('2', sampleLayer2)
-  .layer('3', sampleLayer3);
+var data = shotmap.data(51, 49, 1, 1)
+    .layer("1", 0, layerData)
+    .layer("2", 1, layerData)
+    .layer("3", layer3result, layerData);
 
-shotmap.bind(data, 1, 0)
-  .draw();
+shotmap.create();
 
-/**
- * sample data
- * @param {string} r The row of the die
- * @param {object} c The column of the die
- * @return Information of one die.
- */
-function sampleLayer1(r, c) {
-  var _grade = undefined;
-  if((24 - r) * (24 - r) + (24 - c) * (24 - c) < 625) {
-    _grade = 'a'
-  }
+function layer3result() {
+  return Math.random() > 0.2 ? 0 : 1;
+}  
 
-  return _grade;
-}
+function layerData(row, col) {
+  return "" + row  + "," + col;
+}  
 
-/**
- * sample data
- * @param {string} r The row of the die
- * @param {object} c The column of the die
- * @return Information of one die.
- */
-function sampleLayer2(r, c) {
-  var _grade = undefined;
-  if((24 - r) * (24 - r) + (24 - c) * (24 - c) < 625) {
-    _grade = 'a';
-    if(r % 10 == 0) _grade = 'e';
-    if((r + c) % 11 == 0) _grade = 'f';
-  }
-
-  return _grade;
-}
-
-
-/**
- * sample data
- * @param {string} r The row of the die
- * @param {object} c The column of the die
- * @return Information of one die.
- */
-function sampleLayer3(r, c) {
-  /**
-   * x: column index
-   * y: row index
-   * grade: grade mark, free input
-   */
-  return "f";
-}
-
-function changeVisibility(id, visible) {
-  shotmap.visibility(id, visible ? 'visible' : 'hidden');
-}
-
-function bind(id, enabled) {
+function showLayer(id, enabled) {
   data.layer(id).enabled(enabled);
-  shotmap.draw();
-}
-
-function bindPalette(id, enabled) {
-  data.layer(id).enabled(enabled);
-  shotmap.draw();
 }

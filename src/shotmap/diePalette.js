@@ -12,22 +12,7 @@ export default function(pickerFunc) {
     }
   }
   
-  function defaultColorPicker(grade) {
-    if(grade === 'd') {
-      return "yellow";
-    }
-    if(grade === 'e') {
-      return "yellow";
-    }
-    if(grade === 'f') {
-      return "red";
-    }
-    if(grade === 'g') {
-      return "yellow";
-    }
-    if(grade === undefined) {
-      return 'none';
-    }
-    return 'green';
+  function defaultColorPicker(result) {
+    return result == 0 ? 0x009900 : 0xff0000;
   }
   
