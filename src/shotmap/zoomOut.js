@@ -1,7 +1,7 @@
 export default function(offsetX, offsetY) {
   var stage = this.app.stage;
   // center
-  if(arguments.length != 2) {
+  if(offsetX === undefined) {
     offsetX = stage.x + this.diameter * stage.scale.x / 2;
     offsetY = stage.y + this.diameter * stage.scale.y / 2;
   }	
