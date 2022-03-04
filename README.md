@@ -1,6 +1,12 @@
 uia-wafermap
 ===
 
+## Description
+The project is in progress. The core design is based on STDF V4 format.
+
+* Use maxX, maxY, minX, minY to setup the die size in canvas.
+* No need to has the result of all (x,y).
+
 ## How to build
 1. Install __rollup.js__ package.
 ```
@@ -137,3 +143,13 @@ The output:
 
 * __enabled__ (__boolean__ enabled)
 
+## Known Issues
+1. notch (x, y) offset.
+
+## Copyright and License
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ 
