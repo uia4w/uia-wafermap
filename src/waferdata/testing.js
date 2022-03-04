@@ -8,6 +8,7 @@ export default function(drawR, drawC) {
   var pos = this.pos(drawR, drawC);
   var rowOffset = pos.row - this.minRow;
   var colOffset = pos.col - this.minCol;
+  
   var len = this.layers.length - 1;
   for (var i = len; i >= 0; i--) {
     var _layer = this.layers[i];

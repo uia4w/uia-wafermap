@@ -12,13 +12,13 @@ export default function() {
 	this.dies = new PIXI.Graphics();
 
 	// width/height
-	var w = this.diameter * this.zoom;
-	var r = this.diameter * this.zoom / 2;
-	var rm = (this.diameter - this.margin) * this.zoom / 2;
+	var w = this.diameter;
+	var r = this.diameter / 2;
+	var rm = (this.diameter - this.margin) / 2;
 	
 	// width/height: die
-	var dw = this.dieWidth * this.zoom;
-	var dh = this.dieHeight * this.zoom;
+	var dw = this.dieWidth;
+	var dh = this.dieHeight;
 
 	var dx0 = (w - dw * this.waferdata.cols) / 2
 	var dy0 = (w - dh * this.waferdata.rows) / 2
@@ -41,9 +41,11 @@ export default function() {
 	for(var row = 0; row < this.waferdata.rows; row++) {
 		var dx = dx0;
 		for(var col = 0; col < this.waferdata.cols; col++) {
-			var inCircle = inside(dx, dy , dw, dh, r, r, rm);
+			var inCircle = this.checkBounding ? inside(dx, dy , dw, dh, r, r, rm) : true;
+
+			// testResult: diff from 'testing' or 'counting'
 			var testResult  = this.waferdata.testing(row, col);
-			if(testResult >= 0) {
+			if(inCircle && testResult >= 0) {
 				var die = new PIXI.Graphics();
 				die["info"] = {
 					drawRow: row,
@@ -67,16 +69,8 @@ export default function() {
 							}
 						});
 					}
-					/**
-					_die.clear();
-					_die.lineStyle(1, 0xcccccc, dw / 10);
-					_die.beginFill(0xff0000);
-					_die.drawRect(_info.x, _info.y, dw, dh);
-					_die.endFill();
-					 */
 				});
 				this.dies.addChild(die);
-				//app.stage.addChild(die);
 			}
 			dx += dw;
 		}

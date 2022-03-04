@@ -5,18 +5,21 @@ import * as PIXI from "pixi.js/dist/browser/pixi";
  * 
  * @param {boolean} diesGrid Draw grid line of dies.
  */
-export default function() {
+export default function(checkBounding = false) {
+	this.checkBounding = checkBounding;
+	
 	// width/height
-	var w = this.diameter * this.zoom;
-	var r = this.diameter * this.zoom / 2;
-	var rm = (this.diameter - this.margin) * this.zoom / 2;
+	var w = this.diameter;
+	var r = this.diameter / 2;
+	var rm = (this.diameter - this.margin) / 2;
 	
 	// pixi
 	if(!this.app) {
 		this.app = new PIXI.Application({
 			width: w,
 			height: w,
-			backgroundColor: 0xffffffff
+			backgroundColor: 0xffffff,
+			backgroundAlpha: 0
 		});
 
 		var div = document.getElementById(this.id());
@@ -37,6 +40,40 @@ export default function() {
 		map.endFill();
 
 		this.app.stage.addChild(map);
+
+		// zoom
+		var self = this;
+		this.app.view.addEventListener('mousewheel', function(e) {
+			if(!self.wheelEnabled) {
+				self.reset();
+			} else if(e.deltaY >= 0) {
+				self.zoomIn(e.offsetX, e.offsetY);
+			} else {
+				self.zoomOut(e.offsetX, e.offsetY);
+			}
+	  	});
+  		this.app.view.addEventListener('mousedown', function(e) {
+			if(!self.dragEnabled) {
+				return;
+			}
+			self.move(e.offsetX, e.offsetY, "mousedown");
+	  	});
+  		this.app.view.addEventListener('mouseup', function(e) {
+			if(!self.dragEnabled) {
+				return;
+			}
+			self.move(e.offsetX, e.offsetY, "mouseup");
+		});
+  		this.app.view.addEventListener('mousemove', function(e) {
+			if(!self.dragEnabled) {
+				return;
+			}
+			self.move(e.offsetX, e.offsetY, "mousemove");
+	  	});
+  		this.app.view.addEventListener('dblclick', function(e) {
+			self.zoomIn(e.offsetX, e.offsetY);
+	  	});
+
 	}
 
 	// draw dies

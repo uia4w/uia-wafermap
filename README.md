@@ -22,81 +22,118 @@ npm run test
 npm run build
 ```
 
-5. Click the __index.html__ to see the sample.
-
-## Example.js
+## Example
+sample1.html & sample1.js
 ```js
-var shotmap = uia.shotmap('wafer2')       // element id
-  .wafer(200, 3, 9, 'bottom')             // wafer size
-  .die(3.76, 3.74)                        // die size
-  .reticle(5, 6, 0.3, -9.81)              // reticle size
-  .create()                               // create shotmap
-  .visibility('wafer2_cross', 'hidden');  // hide cross line
 
-var data = shotmap.data(49, 51)           // create waferdata, (row,col) = (49,51)
-  .layer('1', sampleLayer1);              // add layer1 sample data
-  .layer('2', sampleLayer2);              // add layer2 sample data
+// create a shotmap
+var shotmap = uia.shotmap('wafer2')         // element id
+    .size(600, 10)                          // size of canvas
+    .notch("down")                          // notch direction
+    .wheel(true)                            // use the wheel to control zoom in & out 
+    .drag(true)                             // drag and drop the map
+    .diePalette(function(value) {           // color palette, the value passed from result function.
+      switch(value) {
+        case 0:                             // pass
+          return 0x00ff00;                  // green
+        case 1:                             // fail
+          return 0xff0000;                  // red
+        default:                            // unknown
+          return 0xffffff;                  // white
+      }
+    })
 
-shotmap.bind(data, 1, 0)                  // bind data to shotmap, offset of (x,y) is (1,0)
-  .draw();                                // draw
+// bind data to the shotmap
+var data = shotmap.data(101, 98, 1, 1)      // maxRow, maxCol, minRow, minCol, origin="leftdown", pickMode="testing"
+    .layer("1", 0, layerData)               // layer #1, all good, dataset
+    .layer("2", 1, layerData)               // layer #2, all bad, dataset
+    .layer("3", layer3result, layerData);   // layer #3, random result, dataset
+
+shotmap.create(true);                       // create a map with boundary checking. 
+
+function layer3result() {                   // random result of layer 3
+  return Math.random() > 0.2 ? 0 : 1;       
+}  
+
+function layerData(row, col) {              // information of a die
+  return "" + row  + "," + col;
+}  
 ```
+
+The output:
+
 ![WaferMap](WaferMap.png)
 
+## Documentation
 
-## ShotMap Helper Methods
+### ShotMap
 
-### create(diesGrid)
+* __attachClick__ (_function_ clickHandler)
 
-Draw grid line of dies or not.
+  ```js
+  pickerFunc = function({
+    source: Die,
+    data: WaferData,
+    pick: function()
+  }) {
 
-```js
-var shotmap = uia.shotmap('wafer2')
-  .wafer(200, 3, 9, 'bottom')
-  .die(3.76, 3.74)
-  .reticle(5, 6, 0.3, -9.81)
-  .create(true)               // show grid
-```
-
-### visibility(id, value)
-
-Change visibility of some SVG elements.
-
-* id - the naming pattern is {shotmap}___{target}__.
-* value = one of ['hidden' / 'visible']
-
-__{target}__ can be one of:
-* _cross
-* _rect_area
-* _reticles
-* _dies
-
-
-```js
-var shotmap = uia.shotmap('wafer2')             // id
-  .wafer(200, 3, 9, 'bottom')
-  .die(3.76, 3.74)
-  .reticle(5, 6, 0.3, -9.81)
-  .create()
-  .visibility('wafer2_cross', 'hidden')         // wafer2_xxxx
-  .visibility('wafer2_rect_area', 'hidden');
-```
-
-### diePalette(colorPicker)
-
-Draw customize color depending on the grade of the die.
-
-```js
-var shotmap = uia.shotmap('wafer2')
-  .wafer(200, 3, 9, 'bottom')
-  .die(3.76, 3.74)
-  .reticle(5, 6, 0.3, -9.81)
-  .diePalette(failedOnly)
-  .create()
-
-function failedOnly(grade) {
-  if(grade === 'f') {
-    return "red";
   }
-  return 'none';
-}
-```
+  ```
+
+* __create__ (_boolean_ checkBounding)
+
+* __data__ (_int_ maxX, _int_ maxY, _int_ minX = 1, _int_ maxY = 1, _string_ origin = "leftdown", _string_ pickMode = "testing"): ___WaferData___
+
+  The __origin__ is one of `leftdown`, `leftup`, `rightdown` and `rightup`.
+
+  The __pickMode__ is one of `testing` and `counting`.
+  * testing - check if a die is pass or not.
+  * counting - count the failure of number.
+
+
+* __diePalette__ (_function_ pickerFunc)
+  ```js
+  pickerFunc = function(int value) {
+    return color;
+  }
+  ```
+
+
+* __drag__ (_boolean_ enabled)
+
+* __draw__ (_boolean_ enabled))
+
+* __notch__ (_string_ direction)
+
+* __reset__ ()
+
+* __size__ (_int_ diameter, _int_ margin = 10)
+
+* __wheel__ (_boolean_ enabled)
+
+* __zoomIn__ (_int_ offsetX, _int_ offsetY)
+
+* __zoomOut__ (_int_ offsetX, _int_ offsetY)
+
+
+### WaferData
+
+* __layer__ (_string_ id, _function_ resultTester, _function_ dataPicker): ___Layer___
+  ```js
+  resultTester = function(int rowOffset, int colOffset) {
+    return 0; // 0:pass, 1: failed
+  }
+
+  dataPicker = function(int rowOffset, int colOffset) {
+    return any;
+  }
+  ```
+
+* __mode__ (_string_ mode)
+  mode is one of `counting` and `testing`.
+
+
+### Layer
+
+* __enabled__ (__boolean__ enabled)
+

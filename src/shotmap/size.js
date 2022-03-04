@@ -5,7 +5,7 @@
  * @param {int} margin The margin size.
  */
 export default function(diameter, margin = 10) {
-  this.diameter = diameter * 3; // replaced by size()
+  this.diameter = diameter;
   this.margin = margin;
   return this;
 }

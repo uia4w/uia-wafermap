@@ -4,6 +4,32 @@
   (global = global || self, factory(global.uia = global.uia || {}));
 }(this, (function (exports) { 'use strict';
 
+  /**
+   * merge the grade of all layers.
+   * @param {int} drawR The r index of drawing.
+   * @param {int} drawC c index of drawing.
+   * @return {int) 0: pass, -1: unknown, others: fail.
+   */
+  function waferdata_counting(drawR, drawC) {
+    var pos = this.pos(drawR, drawC);
+    var rowOffset = pos.row - this.minRow;
+    var colOffset = pos.col - this.minCol;
+    
+    var found = false;
+    var result = 0;
+    for (var i = 0; i < this.layers.length; i++) {
+      var _layer = this.layers[i];
+      if (_layer.enabled()) {
+        var fail = _layer.result(rowOffset, colOffset);
+        if (fail >= 0) {
+          found = true;
+          result += fail;
+        }
+      }
+    }
+    return found ? result : -1;
+  }
+
   function layer_enabled(on) {
       if(on === undefined) {
           return this.on;
@@ -17,7 +43,6 @@
   function layer(id, shotmap, testResult, dataPicker) {
       return new Layer(id, shotmap, testResult, dataPicker);
   }
-    
     
   function Layer(id, shotmap, testResult, dataPicker = undefined) {
       this.id = id;
@@ -81,6 +106,55 @@
     return this;
   }
 
+  function waferdata_left_down(drawRow, drawCol) {
+    var x = drawCol;
+    var y = this.rows - drawRow - 1;
+    return {
+      row: this.minRow + y,
+      col: this.minCol + x
+    };
+  }
+
+  function waferdata_left_up(drawRow, drawCol) {
+    return {
+      row: this.minRow + drawRow,
+      col: this.minCol + drawCol 
+    };
+  }
+
+  /**
+   * merge the grade of all layers.
+   * @param {int} drawR The r index of drawing.
+   * @param {int} drawC c index of drawing.
+   * @return {int) 0: pass, -1: unknown, others: fail.
+   */
+  function waferdata_testing(drawR, drawC) {
+    var pos = this.pos(drawR, drawC);
+    var rowOffset = pos.row - this.minRow;
+    var colOffset = pos.col - this.minCol;
+    
+    var len = this.layers.length - 1;
+    for (var i = len; i >= 0; i--) {
+      var _layer = this.layers[i];
+      if (_layer.enabled()) {
+        var fail = _layer.result(rowOffset, colOffset);
+        if (fail >= 0) {
+          return fail;
+        }
+      }
+    }
+    return -1;
+  }
+
+  function waferdata_mode(pickMode) {
+    if(pickMode == "counting") {
+      this.testing = waferdata_counting;
+    } else {
+      this.testing = waferdata_testing;
+    }
+    return this;
+  }
+
   /**
    * merge the grade of all layers.
    * @param {int} drawR The row index of drawing.
@@ -98,38 +172,8 @@
     return data;
   }
 
-  /**
-   * merge the grade of all layers.
-   * @param {int} drawR The r index of drawing.
-   * @param {int} drawC c index of drawing.
-   * @return {int) 0: pass, -1: unknown, others: fail.
-   */
-  function waferdata_testing(drawR, drawC) {
-    var pos = this.pos(drawR, drawC);
-    var rowOffset = pos.row - this.minRow;
-    var colOffset = pos.col - this.minCol;
-    var len = this.layers.length - 1;
-    for (var i = len; i >= 0; i--) {
-      var _layer = this.layers[i];
-      if (_layer.enabled()) {
-        var fail = _layer.result(rowOffset, colOffset);
-        if (fail >= 0) {
-          return fail;
-        }
-      }
-    }
-    return -1;
-  }
-
-  function waferdata_leftUp(drawRow, drawCol) {
-    return {
-      row: this.minRow + drawRow,
-      col: this.minCol + drawCol 
-    };
-  }
-
-  function waferdata_leftDown(drawRow, drawCol) {
-    var x = drawCol;
+  function waferdata_right_down(drawRow, drawCol) {
+    var x = this.cols - drawCol - 1;
     var y = this.rows - drawRow - 1;
     return {
       row: this.minRow + y,
@@ -137,48 +181,13 @@
     };
   }
 
-  function waferdata_rightUp(drawRow, drawCol) {
+  function waferdata_right_up(drawRow, drawCol) {
     var x = this.cols - drawCol - 1;
     var y = drawRow;
     return {
       row: this.minRow + y,
       col: this.minCol + x
     };
-  }
-
-  function waferdata_rightDown(drawRow, drawCol) {
-    var x = this.cols - drawCol - 1;
-    var y = this.rows - drawRow - 1;
-    return {
-      row: this.minRow + y,
-      col: this.minCol + x
-    };
-  }
-
-  /**
-   * merge the grade of all layers.
-   * @param {int} drawR The r index of drawing.
-   * @param {int} drawC c index of drawing.
-   * @return {int) 0: pass, -1: unknown, others: fail.
-   */
-  function waferdata_counting(drawR, drawC) {
-    var pos = this.pos(drawR, drawC);
-    var rowOffset = pos.row - this.minRow;
-    var colOffset = pos.col - this.minCol;
-    
-    var found = false;
-    var result = 0;
-    for (var i = 0; i < this.layers.length; i++) {
-      var _layer = this.layers[i];
-      if (_layer.enabled()) {
-        var fail = _layer.result(rowOffset, colOffset);
-        if (fail >= 0) {
-          found = true;
-          result += fail;
-        }
-      }
-    }
-    return found ? result : -1;
   }
 
   function waferdata(shotmap, maxRow, maxCol, minRow, minCol, origin, pickMode) {
@@ -196,13 +205,13 @@
     this.layers = new Array();
     
     if(origin == "rightup" || origin == "ru") {
-      this.pos = waferdata_rightUp;
+      this.pos = waferdata_right_up;
     } else if(origin == "rightdown" || origin == "rd") {
-      this.pos = waferdata_rightDown;
+      this.pos = waferdata_right_down;
     } else if(origin == "leftup" || origin == "lu") {
-        this.pos = waferdata_leftUp;
+        this.pos = waferdata_left_up;
     } else {
-      this.pos = waferdata_leftDown;
+      this.pos = waferdata_left_down;
     }
     
     if(pickMode == "counting") {
@@ -215,6 +224,7 @@
   WaferData.prototype = {
     constructor: WaferData,
     layer: waferdata_layer,
+    mode: waferdata_mode,
     pick: waferdata_pick
   };
 
@@ -42448,18 +42458,21 @@
    * 
    * @param {boolean} diesGrid Draw grid line of dies.
    */
-  function shotmap_create() {
+  function shotmap_create(checkBounding = false) {
+  	this.checkBounding = checkBounding;
+  	
   	// width/height
-  	var w = this.diameter * this.zoom;
-  	var r = this.diameter * this.zoom / 2;
-  	var rm = (this.diameter - this.margin) * this.zoom / 2;
+  	var w = this.diameter;
+  	var r = this.diameter / 2;
+  	var rm = (this.diameter - this.margin) / 2;
   	
   	// pixi
   	if(!this.app) {
   		this.app = new Application({
   			width: w,
   			height: w,
-  			backgroundColor: 0xffffffff
+  			backgroundColor: 0xffffff,
+  			backgroundAlpha: 0
   		});
 
   		var div = document.getElementById(this.id());
@@ -42480,6 +42493,40 @@
   		map.endFill();
 
   		this.app.stage.addChild(map);
+
+  		// zoom
+  		var self = this;
+  		this.app.view.addEventListener('mousewheel', function(e) {
+  			if(!self.wheelEnabled) {
+  				self.reset();
+  			} else if(e.deltaY >= 0) {
+  				self.zoomIn(e.offsetX, e.offsetY);
+  			} else {
+  				self.zoomOut(e.offsetX, e.offsetY);
+  			}
+  	  	});
+    		this.app.view.addEventListener('mousedown', function(e) {
+  			if(!self.dragEnabled) {
+  				return;
+  			}
+  			self.move(e.offsetX, e.offsetY, "mousedown");
+  	  	});
+    		this.app.view.addEventListener('mouseup', function(e) {
+  			if(!self.dragEnabled) {
+  				return;
+  			}
+  			self.move(e.offsetX, e.offsetY, "mouseup");
+  		});
+    		this.app.view.addEventListener('mousemove', function(e) {
+  			if(!self.dragEnabled) {
+  				return;
+  			}
+  			self.move(e.offsetX, e.offsetY, "mousemove");
+  	  	});
+    		this.app.view.addEventListener('dblclick', function(e) {
+  			self.zoomIn(e.offsetX, e.offsetY);
+  	  	});
+
   	}
 
   	// draw dies
@@ -42530,6 +42577,14 @@
       return result == 0 ? 0x009900 : 0xff0000;
     }
 
+  function shotmap_drag(enabled) {
+    if(arguments.length > 0) {
+      this.dragEnabled = enabled;
+      return this;
+    }
+    return this.dragEnabled;
+  }
+
   /**
    * draws shotmap with data.
    *
@@ -42542,13 +42597,13 @@
   	this.dies = new Graphics();
 
   	// width/height
-  	var w = this.diameter * this.zoom;
-  	var r = this.diameter * this.zoom / 2;
-  	var rm = (this.diameter - this.margin) * this.zoom / 2;
+  	var w = this.diameter;
+  	var r = this.diameter / 2;
+  	var rm = (this.diameter - this.margin) / 2;
   	
   	// width/height: die
-  	var dw = this.dieWidth * this.zoom;
-  	var dh = this.dieHeight * this.zoom;
+  	var dw = this.dieWidth;
+  	var dh = this.dieHeight;
 
   	var dx0 = (w - dw * this.waferdata.cols) / 2;
   	var dy0 = (w - dh * this.waferdata.rows) / 2;
@@ -42571,8 +42626,11 @@
   	for(var row = 0; row < this.waferdata.rows; row++) {
   		var dx = dx0;
   		for(var col = 0; col < this.waferdata.cols; col++) {
+  			var inCircle = this.checkBounding ? inside(dx, dy , dw, dh, r, r, rm) : true;
+
+  			// testResult: diff from 'testing' or 'counting'
   			var testResult  = this.waferdata.testing(row, col);
-  			if(testResult >= 0) {
+  			if(inCircle && testResult >= 0) {
   				var die = new Graphics();
   				die["info"] = {
   					drawRow: row,
@@ -42596,22 +42654,79 @@
   							}
   						});
   					}
-  					/**
-  					_die.clear();
-  					_die.lineStyle(1, 0xcccccc, dw / 10);
-  					_die.beginFill(0xff0000);
-  					_die.drawRect(_info.x, _info.y, dw, dh);
-  					_die.endFill();
-  					 */
   				});
   				this.dies.addChild(die);
-  				//app.stage.addChild(die);
   			}
   			dx += dw;
   		}
   		dy += dh;
   	}
   	this.app.stage.addChild(this.dies);
+  }
+
+  function inside(x, y, w, h, cx, cy, r) {
+      var r2 = r * r;
+      return dist(x, y, cx, cy) < r2
+        && dist(x + w, y, cx, cy) < r2
+        && dist(x, y + h, cx, cy) < r2
+        && dist(x + w, y + h, cx, cy) < r2;
+  	}
+    
+  function dist(x, y, cx, cy) {
+      return (x - cx) * (x - cx) + (y - cy) * (y - cy);
+  }
+
+  function shotmap_move(offsetX, offsetY, event) {
+    if(event == 'mousedown') {
+      this.lastPos = { 
+        x: offsetX, 
+        y: offsetY
+      };
+    }
+    else if(event == 'mousemove') {
+      if(this.lastPos) {
+        var stage = this.app.stage;
+        stage.x += (offsetX - this.lastPos.x);
+        stage.y += (offsetY - this.lastPos.y);
+        this.lastPos = { 
+          x: offsetX, 
+          y: offsetY 
+        };
+      }
+    }
+    else {
+      this.lastPos = null;
+    }
+  }
+
+  /**
+   * visibility property.
+   *
+   */
+  function shotmap_notch(side, offset = 1) {
+    this.notchSide = side.toLowerCase();
+    this.notchOffset = offset;
+    return this;
+  }
+
+  function shotmap_reset() {
+  	this.app.stage.x = 0;
+  	this.app.stage.y = 0;
+    this.app.stage.scale.x = 1;
+    this.app.stage.scale.y = 1;
+    return this;
+  }
+
+  /**
+   * sets wafer information.
+   * 
+   * @param {int} diameter The size.
+   * @param {int} margin The margin size.
+   */
+  function shotmap_size(diameter, margin) {
+    this.diameter = diameter;
+    this.margin = margin;
+    return this;
   }
 
   /**
@@ -42628,19 +42743,75 @@
    * @param {int} diameter The size.
    * @param {int} margin The margin size.
    */
-  function shotmap_wafer(diameter, margin) {
-    this.diameter = diameter;
+  function shotmap_wafer(diameter, margin = 10) {
+    this.diameter = diameter * 3; // replaced by size()
     this.margin = margin;
     return this;
   }
 
-  /**
-   * visibility property.
-   *
-   */
-  function shotmap_notch(side, offset = 1) {
-    this.notchSide = side.toLowerCase();
-    this.notchOffset = offset;
+  function shotmap_wheel(enabled) {
+    if(arguments.length > 0) {
+      this.wheelEnabled = enabled;
+      return this;
+    }
+    return this.wheelEnabled;
+  }
+
+  function shotmap_zoom_in(offsetX, offsetY) {
+    var stage = this.app.stage;
+    // center
+    if(arguments.length != 2) {
+      offsetX = stage.x + this.diameter * stage.scale.x / 2;
+      offsetY = stage.y + this.diameter * stage.scale.y / 2;
+    }
+
+  	var worldPos = {
+      x: (offsetX - stage.x) / stage.scale.x, 
+      y: (offsetY - stage.y) / stage.scale.y
+    };
+  	var newScale = {
+      x: stage.scale.x * 2, 
+      y: stage.scale.y * 2
+    };
+  	var newScreenPos = {
+      x: worldPos.x * newScale.x + stage.x, 
+      y: worldPos.y * newScale.y + stage.y
+    };
+  	
+    stage.x -= (newScreenPos.x - offsetX) ;
+  	stage.y -= (newScreenPos.y - offsetY) ;
+  	stage.scale.x = newScale.x;
+  	stage.scale.y = newScale.y;
+    
+    return this;
+  }
+
+  function shotmap_zoom_out(offsetX, offsetY) {
+    var stage = this.app.stage;
+    // center
+    if(arguments.length != 2) {
+      offsetX = stage.x + this.diameter * stage.scale.x / 2;
+      offsetY = stage.y + this.diameter * stage.scale.y / 2;
+    }	
+
+    var worldPos = {
+      x: (offsetX - stage.x) / stage.scale.x, 
+      y: (offsetY - stage.y) / stage.scale.y
+    };
+  	var newScale = {
+      x: stage.scale.x * 0.5, 
+      y: stage.scale.y * 0.5
+    };
+  	var newScreenPos = {
+      x: worldPos.x * newScale.x + stage.x, 
+      y: worldPos.y * newScale.y + stage.y
+    };
+  	
+    stage.x -= (newScreenPos.x - offsetX) ;
+  	stage.y -= (newScreenPos.y - offsetY) ;
+  	stage.scale.x = newScale.x;
+  	stage.scale.y = newScale.y;
+    
     return this;
   }
 
@@ -42648,33 +42819,33 @@
    * new ShotMap object.
    * 
    * @param {string} The id.
-   * @param {int} zoom Zoom size, optional, default is 3.
    * @return {uia.ShotMap} The shotmap object.
    */
-  function shotmap(elementId, zoom = 3) {
-    return new ShotMap(elementId, zoom);
+  function shotmap(elementId) {
+    return new ShotMap(elementId);
   }
 
   /**
    * The constructor.
    * 
    * @param {string} The id.
-   * @param {int} zoom Zoom size, optional, default is 3.
    */
-  function ShotMap(id, zoom = 3) {
+  function ShotMap(id) {
     var _id = id;
-    this.zoom = zoom;
     this.id = function() {
       return _id;
     };
 
     // create
-    this.diameter = 200;
-    this.margin = 3;
-
+    this.diameter = 600;
+    this.margin = 10;
     // notch
     this.notchSide = "down";
     this.notchOffset = 1;
+    // wheel
+    this.wheelEnabled = false;
+    // drag
+    this.dragEnabled = false;
   }
 
   ShotMap.prototype = (function(){
@@ -42684,10 +42855,17 @@
       create: shotmap_create,
       data: shotmap_data,
       diePalette: shotmap_die_palette,
+      drag: shotmap_drag,
       draw: shotmap_draw,
+      move: shotmap_move,
+      notch: shotmap_notch,
+      reset: shotmap_reset,
+      size: shotmap_size,
       visibility: shotmap_visibility,
       wafer: shotmap_wafer,
-      notch: shotmap_notch
+      wheel: shotmap_wheel,
+      zoomIn: shotmap_zoom_in,
+      zoomOut: shotmap_zoom_out
     };
   }());
 

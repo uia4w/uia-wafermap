@@ -4,7 +4,6 @@ export default function(id, shotmap, testResult, dataPicker) {
     return new Layer(id, shotmap, testResult, dataPicker);
 }
   
-  
 function Layer(id, shotmap, testResult, dataPicker = undefined) {
     this.id = id;
     this.shotmap = shotmap;

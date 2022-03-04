@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+    <title>WaferMap Sample</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/svg.css">
+</head>
+<body>
+    <h3>Layers</h3>
+	<input type="checkbox" checked onchange="showLayer('1', this.checked);">All Good
+	<input type="checkbox" checked onchange="showLayer('2', this.checked);">All Bad
+	<input type="checkbox" checked onchange="showLayer('3', this.checked);">Random
+    <h3>Functions</h3>
+	<input type="checkbox" checked onchange="wheel(this.checked);">Wheel
+	<input type="checkbox" checked onchange="drag(this.checked);">Drag and Drop
+    <h3>Zoom</h3>
+	<input type="button" onclick="zoomIn();" value="Zoom In">
+	<input type="button" onclick="zoomOut();" value="Zoom Out">
+	<input type="button" onclick="reset();" value="Reset">
+    <h3>Map</h3>
+	<div id="wafer2"></div>
+
+	<script type="text/javascript" src="node_modules/pixi.js/dist/browser/pixi.js"></script>
+	<script type="text/javascript" src="dist/uia-wafermap.js"></script>
+    <script type="text/javascript" src="example1.js"></script>
+</body>
+</html>
