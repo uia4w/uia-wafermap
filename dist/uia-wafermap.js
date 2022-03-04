@@ -42723,17 +42723,9 @@
    * @param {int} diameter The size.
    * @param {int} margin The margin size.
    */
-  function shotmap_size(diameter, margin) {
+  function shotmap_size(diameter, margin = 10) {
     this.diameter = diameter;
     this.margin = margin;
-    return this;
-  }
-
-  /**
-   * visibility property.
-   *
-   */
-  function shotmap_visibility(g, v) {
     return this;
   }
 
@@ -42816,7 +42808,7 @@
   }
 
   /**
-   * new ShotMap object.
+   * new ShotMap object. 
    * 
    * @param {string} The id.
    * @return {uia.ShotMap} The shotmap object.
@@ -42861,7 +42853,6 @@
       notch: shotmap_notch,
       reset: shotmap_reset,
       size: shotmap_size,
-      visibility: shotmap_visibility,
       wafer: shotmap_wafer,
       wheel: shotmap_wheel,
       zoomIn: shotmap_zoom_in,
