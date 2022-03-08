@@ -14,6 +14,7 @@ export default function(offsetX, offsetY, event) {
         x: offsetX, 
         y: offsetY 
       };
+      this.app.render();
     }
   }
   else {

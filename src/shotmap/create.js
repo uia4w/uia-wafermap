@@ -19,7 +19,8 @@ export default function(checkBounding = false) {
 			width: w,
 			height: w,
 			backgroundColor: 0xffffff,
-			backgroundAlpha: 0
+			backgroundAlpha: 0,
+			autoStart: false
 		});
 
 		var div = document.getElementById(this.id());

@@ -77,6 +77,8 @@ export default function() {
 		dy += dh;
 	}
 	this.app.stage.addChild(this.dies);
+
+	this.app.render();
 }
 
 function inside(x, y, w, h, cx, cy, r) {

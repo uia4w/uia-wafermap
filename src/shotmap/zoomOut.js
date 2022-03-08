@@ -24,5 +24,7 @@ export default function(offsetX, offsetY) {
 	stage.scale.x = newScale.x;
 	stage.scale.y = newScale.y;
   
+  this.app.render();
+
   return this;
 }
