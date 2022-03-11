@@ -7,15 +7,21 @@
     <link rel="stylesheet" href="css/svg.css">
 </head>
 <body>
-    <h3>Layers, Counting Mode</h3>
-	<input type="checkbox" checked onchange="showLayer('1', this.checked);">All Good
-	<input type="checkbox" checked onchange="showLayer('2', this.checked);">Random
-	<input type="checkbox" checked onchange="showLayer('3', this.checked);">Random
+    <h3>Layers</h3>
+	<input type="checkbox" checked onchange="showLayer('1', this.checked);">Random 1
+	<input type="checkbox" checked onchange="showLayer('2', this.checked);">Random 2
     <h3>Map</h3>
+	<div>
+		<ol>
+			<li>Green - All Good or 2nd Good</li>
+			<li>Red - All Bad</li>
+			<li>Blue - First Good but 1st Bad</li>
+		</ol>
+	</div>
 	<div id="wafer2"></div>
 
 	<script type="text/javascript" src="node_modules/pixi.js/dist/browser/pixi.js"></script>
 	<script type="text/javascript" src="dist/uia-wafermap.js"></script>
-    <script type="text/javascript" src="example2.js"></script>
+    <script type="text/javascript" src="example3.js"></script>
 </body>
 </html>

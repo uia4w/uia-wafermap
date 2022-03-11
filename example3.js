@@ -8,9 +8,9 @@ var shotmap = uia.shotmap('wafer2')
         case 0:
           return 0x00ff00;
         case 1:
-            return 0x0000ff;
-        case 2:
           return 0xff0000;
+        case 2:
+          return 0x0000ff;  // good to bad
         default:
           return 0xffffff;
       }
@@ -20,10 +20,9 @@ var shotmap = uia.shotmap('wafer2')
     })
 
 
-var data = shotmap.data(101, 98, 1, 1, "leftdown", "counting")
-    .layer("1", 0, layerData)
-    .layer("2", layerResult, layerData)
-    .layer("3", layerResult, layerData);
+var data = shotmap.data(101, 98, 1, 1, "leftdown", "testing")
+    .layer("1", layerResult, layerData)
+    .layer("2", layerResult, layerData);
 
 shotmap.create(true);
 

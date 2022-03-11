@@ -28,8 +28,8 @@ npm run test
 npm run build
 ```
 
-## Example
-sample1.html & sample1.js
+## Examples
+### Example1
 ```js
 
 // create a shotmap
@@ -55,6 +55,8 @@ var data = shotmap.data(101, 98, 1, 1)      // maxRow, maxCol, minRow, minCol, o
     .layer("2", 1, layerData)               // layer #2, all bad, dataset
     .layer("3", layer3result, layerData);   // layer #3, random result, dataset
 
+data.layer("2").enabled(false);             // disable layer #2
+
 shotmap.create(true);                       // create a map with boundary checking. 
 
 function layer3result() {                   // random result of layer 3
@@ -68,7 +70,37 @@ function layerData(row, col) {              // information of a die
 
 The output:
 
-![WaferMap](WaferMap.png)
+![example1](example1.png)
+
+### Example3
+Use blue to identify __good to bad__ test results.
+```js
+var shotmap = uia.shotmap('wafer2')
+    .size(600, 10)
+    .notch("down")
+    .wheel(false)
+    .drag(false)
+    .diePalette(function(value) { 
+      switch(value) {
+        case 0:
+          return 0x00ff00;
+        case 1:
+          return 0xff0000;
+        case 2:
+          return 0x0000ff;  // from good to bad
+        default:
+          return 0xffffff;
+      }
+    })
+    .attachClick(function(oEvent) {         // click event of the die
+      alert(oEvent.pick()[0]);
+    })
+```
+
+The output:
+
+![example3](example3.png)
+
 
 ## Documentation
 

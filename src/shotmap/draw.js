@@ -8,6 +8,9 @@ export default function() {
     if(this.dies) {
         this.dies.destroy();
     }
+	if(!this.app) {
+		return;
+	}
 
 	this.dies = new PIXI.Graphics();
 

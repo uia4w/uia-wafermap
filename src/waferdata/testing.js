@@ -9,16 +9,21 @@ export default function(drawR, drawC) {
   var rowOffset = pos.row - this.minRow;
   var colOffset = pos.col - this.minCol;
   
-  var len = this.layers.length - 1;
-  for (var i = len; i >= 0; i--) {
+  var found = false;
+  var pass = false;
+  for (var i = 0; i < this.layers.length; i++) {
     var _layer = this.layers[i];
     if (_layer.enabled()) {
-      var fail = _layer.result(rowOffset, colOffset);
-      if (fail >= 0) {
-        return fail;
+      var code = _layer.result(rowOffset, colOffset);
+      if (code >= 0) {
+        found = true;
+        if(pass && code > 0) {
+          return 2;   // good to bad
+        }
+        pass = (code == 0);
       }
     }
   }
-  return -1;
+  return found ? pass ? 0 : 1 : -1;
 }
 
