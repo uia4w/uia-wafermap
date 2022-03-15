@@ -14,7 +14,13 @@ var shotmap = uia.shotmap('wafer2')
         default:
           return 0xffffff;
       }
-    });
+    })
+    .attachHoverIn(function(oEvent) {
+      document.getElementById("position").innerHTML = "Map " + oEvent.source.info.drawRow + "," + oEvent.source.info.drawCol;
+    })
+    .attachHoverOut(function(oEvent) {
+      document.getElementById("position").innerHTML = "Map";
+    })
 
 var data = shotmap.data(101, 98, 1, 1)
     .layer("1", 0, layerData)

@@ -233,8 +233,18 @@
     pick: waferdata_pick
   };
 
-  function shotmap_attachClick(fHandler) {
+  function shotmap_attach_click(fHandler) {
       this.clickHandler = fHandler;
+      return this;
+  }
+
+  function shotmap_attach_hover_in(fHandler) {
+      this.hoverInHandler = fHandler;
+      return this;
+  }
+
+  function shotmap_attach_hover_out(fHandler) {
+      this.hoverOutHandler = fHandler;
       return this;
   }
 
@@ -42476,7 +42486,6 @@
   		this.app = new Application({
   			width: w,
   			height: w,
-  			backgroundColor: 0xffffff,
   			backgroundAlpha: 0,
   			autoStart: false
   		});
@@ -42658,6 +42667,33 @@
   						self.clickHandler({
   							source: _die,
   							data: self.waferdata,
+  							point: e.data.global,
+  							pick: function() {
+  								return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
+  							}
+  						});
+  					}
+  				});
+  				die.on("mouseover", function(e) {
+  					if(self.hoverInHandler) {
+  						var _die = e.target;
+  						self.hoverInHandler({
+  							source: _die,
+  							data: self.waferdata,
+  							point: e.data.global,
+  							pick: function() {
+  								return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
+  							}
+  						});
+  					}
+  				});
+  				die.on("mouseout", function(e) {
+  					if(self.hoverOutHandler) {
+  						var _die = e.target;
+  						self.hoverOutHandler({
+  							source: _die,
+  							data: self.waferdata,
+  							point: e.data.global,
   							pick: function() {
   								return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
   							}
@@ -42862,7 +42898,9 @@
   ShotMap.prototype = (function(){
     return {
       constructor: ShotMap,
-      attachClick: shotmap_attachClick,
+      attachClick: shotmap_attach_click,
+      attachHoverIn: shotmap_attach_hover_in,
+      attachHoverOut: shotmap_attach_hover_out,
       create: shotmap_create,
       data: shotmap_data,
       diePalette: shotmap_die_palette,

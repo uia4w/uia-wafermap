@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js/dist/browser/pixi";
+import { createPopper } from "@popperjs/core/dist/esm";
 
 /**
  * draws shotmap with data.
@@ -67,6 +68,33 @@ export default function() {
 						self.clickHandler({
 							source: _die,
 							data: self.waferdata,
+							point: e.data.global,
+							pick: function() {
+								return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
+							}
+						});
+					}
+				});
+				die.on("mouseover", function(e) {
+					if(self.hoverInHandler) {
+						var _die = e.target;
+						self.hoverInHandler({
+							source: _die,
+							data: self.waferdata,
+							point: e.data.global,
+							pick: function() {
+								return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
+							}
+						});
+					}
+				});
+				die.on("mouseout", function(e) {
+					if(self.hoverOutHandler) {
+						var _die = e.target;
+						self.hoverOutHandler({
+							source: _die,
+							data: self.waferdata,
+							point: e.data.global,
 							pick: function() {
 								return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
 							}
@@ -95,4 +123,3 @@ function inside(x, y, w, h, cx, cy, r) {
 function dist(x, y, cx, cy) {
     return (x - cx) * (x - cx) + (y - cy) * (y - cy);
 }
-  

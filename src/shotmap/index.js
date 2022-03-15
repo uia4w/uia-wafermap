@@ -1,4 +1,6 @@
-import shotmap_attachClick from "./attachClick";
+import shotmap_attach_click from "./attachClick";
+import shotmap_attach_hover_in from "./attachHoverIn";
+import shotmap_attach_hover_out from "./attachHoverOut";
 import shotmap_create from "./create";
 import shotmap_data from "./data";
 import shotmap_die_palette from "./diePalette";
@@ -49,7 +51,9 @@ function ShotMap(id) {
 ShotMap.prototype = (function(){
   return {
     constructor: ShotMap,
-    attachClick: shotmap_attachClick,
+    attachClick: shotmap_attach_click,
+    attachHoverIn: shotmap_attach_hover_in,
+    attachHoverOut: shotmap_attach_hover_out,
     create: shotmap_create,
     data: shotmap_data,
     diePalette: shotmap_die_palette,

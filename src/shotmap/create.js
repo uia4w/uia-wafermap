@@ -18,7 +18,6 @@ export default function(checkBounding = false) {
 		this.app = new PIXI.Application({
 			width: w,
 			height: w,
-			backgroundColor: 0xffffff,
 			backgroundAlpha: 0,
 			autoStart: false
 		});
