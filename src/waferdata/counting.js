@@ -8,7 +8,7 @@ export default function(drawR, drawC) {
   var pos = this.pos(drawR, drawC);
   var rowOffset = pos.row - this.minRow;
   var colOffset = pos.col - this.minCol;
-  
+
   var found = false;
   var result = 0;
   for (var i = 0; i < this.layers.length; i++) {
@@ -23,4 +23,3 @@ export default function(drawR, drawC) {
   }
   return found ? result : -1;
 }
-

@@ -8,7 +8,7 @@ export default function(drawR, drawC) {
   var pos = this.pos(drawR, drawC);
   var rowOffset = pos.row - this.minRow;
   var colOffset = pos.col - this.minCol;
-  
+
   var found = false;
   var pass = false;
   for (var i = 0; i < this.layers.length; i++) {
@@ -17,8 +17,8 @@ export default function(drawR, drawC) {
       var code = _layer.result(rowOffset, colOffset);
       if (code >= 0) {
         found = true;
-        if(pass && code > 0) {
-          return 2;   // good to bad
+        if (pass && code > 0) {
+          return 2; // good to bad
         }
         pass = (code == 0);
       }
@@ -26,4 +26,3 @@ export default function(drawR, drawC) {
   }
   return found ? pass ? 0 : 1 : -1;
 }
-

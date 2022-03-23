@@ -14,7 +14,7 @@
     var pos = this.pos(drawR, drawC);
     var rowOffset = pos.row - this.minRow;
     var colOffset = pos.col - this.minCol;
-    
+
     var found = false;
     var result = 0;
     for (var i = 0; i < this.layers.length; i++) {
@@ -30,57 +30,59 @@
     return found ? result : -1;
   }
 
-  function layer_enabled(on) {
-      if(on === undefined) {
-          return this.on;
-      } else {
-          this.on = on;
-          this.shotmap.draw();
-          return this;
+  function layer_enabled(on, redraw = true) {
+    if (on === undefined) {
+      return this.on;
+    } else {
+      this.on = on;
+      if (redraw) {
+        this.shotmap.draw();
       }
+      return this;
+    }
   }
 
   function layer(id, shotmap, testResult, dataPicker) {
-      return new Layer(id, shotmap, testResult, dataPicker);
+    return new Layer(id, shotmap, testResult, dataPicker);
   }
-    
+
   function Layer(id, shotmap, testResult, dataPicker = undefined) {
-      this.id = id;
-      this.shotmap = shotmap;
-      this.on = true;
-      if(typeof testResult === "function") {
-          this.testResultF = testResult;
-      } else {
-          this.testResultF = function() { return testResult };
-      }
-      this.dataPicker = dataPicker;
+    this.id = id;
+    this.shotmap = shotmap;
+    this.on = true;
+    if (typeof testResult === "function") {
+      this.testResultF = testResult;
+    } else {
+      this.testResultF = function() { return testResult };
+    }
+    this.dataPicker = dataPicker;
   }
-    
+
   Layer.prototype = {
-    
-      constructor: Layer,
 
-      enabled: layer_enabled,
+    constructor: Layer,
 
-      /**
-       * Get test result from die matrix.
-       * @param {int} rowOffset The row offset of min row.
-       * @param {int} colOffset The column offset of min column. 
-       * @returns 0: pass, 1: failed, -1: unknown.
-       */
-      result: function(rowOffset, colOffset) {
-          return this.testResultF(rowOffset, colOffset);
-      },
+    enabled: layer_enabled,
 
-      /**
-       * Get information from die matrix.
-       * @param {int} rowOffset The row offset of min row.
-       * @param {int} colOffset The column offset of min column. 
-       * @returns {any} The information.
-       */
-      data: function(rowOffset, colOffset) {
-          return this.dataPicker ? this.dataPicker(rowOffset, colOffset) : null;
-      }
+    /**
+     * Get test result from die matrix. 
+     * @param {int} rowOffset The row offset of min row.
+     * @param {int} colOffset The column offset of min column. 
+     * @returns 0: pass, 1: failed, -1: unknown.
+     */
+    result: function(rowOffset, colOffset) {
+      return this.testResultF(rowOffset, colOffset);
+    },
+
+    /**
+     * Get information from die matrix.
+     * @param {int} rowOffset The row offset of min row.
+     * @param {int} colOffset The column offset of min column. 
+     * @returns {any} The information.
+     */
+    data: function(rowOffset, colOffset) {
+      return this.dataPicker ? this.dataPicker(rowOffset, colOffset) : null;
+    }
 
   };
 
@@ -95,12 +97,12 @@
     var found = this.layers.find(function(layer) {
       return layer.id == id;
     });
-    
-    if(resultTester === undefined) {
+
+    if (resultTester === undefined) {
       return found;
     }
 
-    if(found == undefined) {
+    if (found == undefined) {
       this.layers.push(layer(id, this.shotmap, resultTester, dataPicker));
     }
     return this;
@@ -118,7 +120,7 @@
   function waferdata_left_up(drawRow, drawCol) {
     return {
       row: this.minRow + drawRow,
-      col: this.minCol + drawCol 
+      col: this.minCol + drawCol
     };
   }
 
@@ -132,7 +134,7 @@
     var pos = this.pos(drawR, drawC);
     var rowOffset = pos.row - this.minRow;
     var colOffset = pos.col - this.minCol;
-    
+
     var found = false;
     var pass = false;
     for (var i = 0; i < this.layers.length; i++) {
@@ -141,8 +143,8 @@
         var code = _layer.result(rowOffset, colOffset);
         if (code >= 0) {
           found = true;
-          if(pass && code > 0) {
-            return 2;   // good to bad
+          if (pass && code > 0) {
+            return 2; // good to bad
           }
           pass = (code == 0);
         }
@@ -152,7 +154,7 @@
   }
 
   function waferdata_mode(pickMode) {
-    if(pickMode == "counting") {
+    if (pickMode == "counting") {
       this.testing = waferdata_counting;
     } else {
       this.testing = waferdata_testing;
@@ -208,18 +210,18 @@
     this.rows = maxRow - minRow + 1;
     this.cols = maxCol - minCol + 1;
     this.layers = new Array();
-    
-    if(origin == "rightup" || origin == "ru") {
+
+    if (origin == "rightup" || origin == "ru") {
       this.pos = waferdata_right_up;
-    } else if(origin == "rightdown" || origin == "rd") {
+    } else if (origin == "rightdown" || origin == "rd") {
       this.pos = waferdata_right_down;
-    } else if(origin == "leftup" || origin == "lu") {
-        this.pos = waferdata_left_up;
+    } else if (origin == "leftup" || origin == "lu") {
+      this.pos = waferdata_left_up;
     } else {
       this.pos = waferdata_left_down;
     }
-    
-    if(pickMode == "counting") {
+
+    if (pickMode == "counting") {
       this.testing = waferdata_counting;
     } else {
       this.testing = waferdata_testing;
@@ -234,18 +236,18 @@
   };
 
   function shotmap_attach_click(fHandler) {
-      this.clickHandler = fHandler;
-      return this;
+    this.clickHandler = fHandler;
+    return this;
   }
 
   function shotmap_attach_hover_in(fHandler) {
-      this.hoverInHandler = fHandler;
-      return this;
+    this.hoverInHandler = fHandler;
+    return this;
   }
 
   function shotmap_attach_hover_out(fHandler) {
-      this.hoverOutHandler = fHandler;
-      return this;
+    this.hoverOutHandler = fHandler;
+    return this;
   }
 
   /*!
@@ -42468,85 +42470,243 @@
   Application.registerPlugin(TickerPlugin);
   Application.registerPlugin(AppLoaderPlugin);
 
+  function shotmap_blocking(blur = 9, bg = null) {
+    let canvas = this.extract("canvas");
+    let src = cv.imread(canvas);
+    let dst = new cv.Mat();
+
+    cv.medianBlur(src, src, blur % 2 == 0 ? blur + 1 : blur);
+
+    let masked = new cv.Mat(canvas.height, canvas.width, cv.CV_8UC1);
+    let subtractor = new cv.BackgroundSubtractorMOG2(500, 16, true);
+    subtractor.apply(src, masked);
+
+    cv.threshold(src, dst, 0, 255, cv.THRESH_BINARY);
+
+    var width = canvas.width;
+    var height = canvas.height;
+
+    var data = new Array(height);
+    for (var y = 0; y < height; y++) {
+      data[y] = new Array(width);
+      for (var x = 0; x < width; x++) {
+        data[y][x] = 0;
+      }
+    }
+
+    var links = [];
+    var aid = 1;
+    for (var y = 1; y < height - 1; y++) {
+      var row = data[y];
+      for (var x = 1; x < width - 1; x++) {
+        var ignore = nav(dst, x, y, bg) || (
+          nav(dst, x - 1, y - 1, bg) &&
+          nav(dst, x, y - 1, bg) &&
+          nav(dst, x + 1, y - 1, bg) &&
+          nav(dst, x - 1, y, bg) &&
+          nav(dst, x + 1, y, bg) &&
+          nav(dst, x - 1, y + 1, bg) &&
+          nav(dst, x, y + 1, bg) &&
+          nav(dst, x + 1, y + 1, bg));
+
+        if (!ignore) {
+          // 1 2 3
+          // 4 ? .
+          var a1 = data[y - 1][x - 1];
+          var a2 = data[y - 1][x];
+          var a3 = data[y - 1][x + 1];
+          var a4 = row[x - 1];
+          if (a4 != 0) {
+            row[x] = a4;
+          } else if (a1 != 0) {
+            row[x] = a1;
+          } else if (a2 != 0) {
+            row[x] = a2;
+          } else if (a3 != 0) {
+            row[x] = a3;
+          } else {
+            row[x] = aid++;
+          }
+
+          // link tow areas
+          if (a3 != 0 && row[x] != a3) {
+            var aid1 = Math.min(row[x], a3);
+            var aid2 = Math.max(row[x], a3);
+            if (!links.find(link => link[0] == aid1 && link[1] == aid2)) {
+              links.push([aid1, aid2]);
+            }
+          }
+        }
+      }
+    }
+
+    aid = width * height;
+    var areaLinks = {};
+    var groups = grouping(links);
+    for (var g = 0; g < groups.length; g++) {
+      var group = groups[g];
+      group.forEach(id => areaLinks[id] = aid);
+      aid++;
+    }
+
+    // area
+    var areas = {};
+    for (var y = 0; y < height; y++) {
+      var row = data[y];
+      for (var x = 0; x < width; x++) {
+        if (row[x] != 0) {
+          row[x] = areaLinks[row[x]] || row[x];
+          areas[row[x]] = areas[row[x]] || { id: row[x], pts: 0 };
+          areas[row[x]].pts++;
+
+        }
+      }
+    }
+    var sorted = Object.values(areas).sort((a, b) => b.pts - a.pts);
+    for (var r = 0; r < sorted.length; r++) {
+      sorted[r]["rank"] = r;
+    }
+
+    src.delete();
+    dst.delete();
+
+    return {
+      data: data,
+      areas: areas
+    }
+  }
+
+  function nav(src, x, y, background) {
+    let r = src.ucharAt(y, x * src.channels());
+    let g = src.ucharAt(y, x * src.channels() + 1);
+    let b = src.ucharAt(y, x * src.channels() + 2);
+    let rgb = r << 16 || g << 8 || b;
+    return (background != null && background == rgb) || (r == 255 && g == 255 && b == 255) || (r == 0 && g == 0 && b == 0);
+  }
+
+  function grouping(links) {
+    var result = [];
+    var merge = false;
+    for (var l = 0; l < links.length; l++) {
+      var link = links[l];
+      var found = null;
+      for (var r = 0; r < result.length; r++) {
+        var one = result[r];
+        for (var x = 0; x < link.length; x++) {
+          if (one.find(o => o == link[x])) {
+            found = one;
+            break;
+          }
+        }
+        if (found != null) {
+          break;
+        }
+      }
+
+      if (!found) {
+        result.push(link);
+      } else {
+        merge = true;
+        for (var x = 0; x < link.length; x++) {
+          if (!found.find(o => o == link[x])) {
+            found.push(link[x]);
+          }
+        }
+      }
+    }
+    if (merge) {
+      return grouping(result);
+    } else {
+      return result;
+    }
+  }
+
   /**
    * create shotmap without data
    * 
    * @param {boolean} diesGrid Draw grid line of dies.
    */
   function shotmap_create(checkBounding = false) {
-  	this.checkBounding = checkBounding;
-  	
-  	// width/height
-  	var w = this.diameter;
-  	var r = this.diameter / 2;
-  	var rm = (this.diameter - this.margin) / 2;
-  	
-  	// pixi
-  	if(!this.app) {
-  		this.app = new Application({
-  			width: w,
-  			height: w,
-  			backgroundAlpha: 0,
-  			autoStart: false
-  		});
+    this.checkBounding = checkBounding;
 
-  		var div = document.getElementById(this.id());
-  		div.setAttribute("style","width:" + w + "px");
-  		div.setAttribute("style","height:" + w + "px");
-  		div.appendChild(this.app.view);
+    // width/height
+    var w = this.diameter;
+    var r = this.diameter / 2;
+    var rm = (this.diameter - this.margin) / 2;
 
-  		// circle
-  		const map = new Graphics();
-  		// circle: wafer
-  		map.lineStyle(0);
-  		map.beginFill(0x999999);
-  		map.drawCircle(r, r, r);
-  		map.endFill();
-  		// circle: margin
-  		map.beginFill(0xeeeeee);
-  		map.drawCircle(r, r, rm);
-  		map.endFill();
+    // pixi
+    if (!this.app) {
+      this.app = new Application({
+        width: w,
+        height: w,
+        backgroundAlpha: 0,
+        autoStart: false
+      });
 
-  		this.app.stage.addChild(map);
+      var div = document.getElementById(this.id());
+      div.setAttribute("style", "width:" + w + "px");
+      div.setAttribute("style", "height:" + w + "px");
+      div.appendChild(this.app.view);
 
-  		// zoom
-  		var self = this;
-  		this.app.view.addEventListener('mousewheel', function(e) {
-  			if(!self.wheelEnabled) {
-  				self.reset();
-  			} else if(e.deltaY >= 0) {
-  				self.zoomIn(e.offsetX, e.offsetY);
-  			} else {
-  				self.zoomOut(e.offsetX, e.offsetY);
-  			}
-  	  	});
-    		this.app.view.addEventListener('mousedown', function(e) {
-  			if(!self.dragEnabled) {
-  				return;
-  			}
-  			self.move(e.offsetX, e.offsetY, "mousedown");
-  	  	});
-    		this.app.view.addEventListener('mouseup', function(e) {
-  			if(!self.dragEnabled) {
-  				return;
-  			}
-  			self.move(e.offsetX, e.offsetY, "mouseup");
-  		});
-    		this.app.view.addEventListener('mousemove', function(e) {
-  			if(!self.dragEnabled) {
-  				return;
-  			}
-  			self.move(e.offsetX, e.offsetY, "mousemove");
-  	  	});
-    		this.app.view.addEventListener('dblclick', function(e) {
-  			self.zoomIn(e.offsetX, e.offsetY);
-  	  	});
+      // circle
+      const map = new Graphics();
+      // circle: wafer
+      map.lineStyle(0);
+      map.beginFill(0x999999);
+      map.drawCircle(r, r, r);
+      map.endFill();
+      // circle: margin
+      map.beginFill(0xeeeeee);
+      map.drawCircle(r, r, rm);
+      map.endFill();
 
-  	}
+      this.app.stage.addChild(map);
 
-  	// draw dies
-  	this.draw();
-  	return this;
+      // zoom
+      var self = this;
+      var down = false;
+      this.app.view.addEventListener('mousewheel', function(e) {
+        if (!self.wheelEnabled) {
+          self.reset();
+        } else if (e.deltaY >= 0) {
+          self.zoomIn(e.offsetX, e.offsetY);
+        } else {
+          self.zoomOut(e.offsetX, e.offsetY);
+        }
+      });
+      this.app.view.addEventListener('mousedown', function(e) {
+        down = true;
+        if (!self.dragEnabled) {
+          return;
+        }
+        self.move(e.offsetX, e.offsetY, "mousedown");
+      });
+      this.app.view.addEventListener('mouseup', function(e) {
+        down = false;
+        if (!self.dragEnabled) {
+          return;
+        }
+        self.move(e.offsetX, e.offsetY, "mouseup");
+      });
+      this.app.view.addEventListener('mousemove', function(e) {
+        if (!self.dragEnabled) {
+          if (down && e.movementX < -10) {
+            self.reset();
+            down = false;
+          }
+          return;
+        }
+        self.move(e.offsetX, e.offsetY, "mousemove");
+      });
+      this.app.view.addEventListener('dblclick', function(e) {
+        self.zoomIn(e.offsetX, e.offsetY);
+      });
+
+    }
+
+    // draw dies
+    this.draw();
+    return this;
   }
 
   /**
@@ -42561,10 +42721,10 @@
    * @return {uia.WaferData} The wafer data.
    */
   function shotmap_data(maxRow, maxCol, minRow = 1, minCol = 1, origin = "leftdown", pickMode = "testing") {
-    if(origin == undefined || origin == null) {
+    if (origin == undefined || origin == null) {
       origin = "leftdown";
     }
-    if(pickMode == undefined || pickMode == null) {
+    if (pickMode == undefined || pickMode == null) {
       origin = "testing";
     }
     this.waferdata = waferdata(this, maxRow, maxCol, minRow, minCol, origin.toLowerCase(), pickMode.toLowerCase());
@@ -42580,20 +42740,28 @@
    * @param {function} colorPicker A function to provide the color depending on the grade of the die.
    */
   function shotmap_die_palette(pickerFunc) {
-      if(pickerFunc === undefined) {
-          return this.colorPicker || defaultColorPicker;
-      } else {
-          this.colorPicker = pickerFunc;
-          return this;
-      }
-    }
-    
-    function defaultColorPicker(result) {
-      return result == 0 ? 0x009900 : 0xff0000;
+    if (pickerFunc === undefined) {
+      return this.colorPicker || defaultColorPicker;
     }
 
+    this.colorPicker = pickerFunc;
+    return this;
+  }
+
+  function defaultColorPicker(result) {
+    return result == 0 ? 0x009900 : 0xff0000;
+  }
+
+  function shotmap_die_rect(enabled) {
+    if (arguments.length > 0) {
+      this.dieRectEnabled = enabled;
+      return this;
+    }
+    return this.dieRectEnabled;
+  }
+
   function shotmap_drag(enabled) {
-    if(arguments.length > 0) {
+    if (arguments.length > 0) {
       this.dragEnabled = enabled;
       return this;
     }
@@ -42605,144 +42773,153 @@
    *
    */
   function shotmap_draw() {
-      if(this.dies) {
-          this.dies.destroy();
+    if (this.dies) {
+      this.dies.destroy();
+    }
+    if (!this.app) {
+      return;
+    }
+
+    this.dies = new Graphics();
+
+    // width/height
+    var w = this.diameter;
+    var r = this.diameter / 2;
+    var rm = (this.diameter - this.margin) / 2;
+
+    // width/height: die
+    var dw = this.dieWidth;
+    var dh = this.dieHeight;
+
+    var dx0 = (w - dw * this.waferdata.cols) / 2;
+    var dy0 = (w - dh * this.waferdata.rows) / 2;
+    if (this.notchSide == "left" || this.notchSide == "l") {
+      dx0 += dw * this.notchOffset;
+    } else if (this.notchSide == "right" || this.notchSide == "r") {
+      dx0 -= dw * this.notchOffset;
+    } else if (this.notchSide == "up" || this.notchSide == "u") {
+      dy0 += dh * this.notchOffset;
+    } else {
+      dy0 -= dh * this.notchOffset;
+    }
+
+    // grid: dies
+    var self = this;
+    var dy = dy0;
+    for (var row = 0; row < this.waferdata.rows; row++) {
+      var dx = dx0;
+      for (var col = 0; col < this.waferdata.cols; col++) {
+        var inCircle = this.checkBounding ? inside(dx, dy, dw, dh, r, r, rm) : true;
+
+        // testResult: diff from 'testing' or 'counting'
+        var testResult = this.waferdata.testing(row, col);
+        if (inCircle && testResult >= 0) {
+          var die = new Graphics();
+          die["info"] = {
+            drawRow: row,
+            drawCol: col,
+            x: dx,
+            y: dy
+          };
+          if (this.dieRectEnabled) {
+            die.lineStyle(1, 0xcccccc, dw / 10);
+          }
+          die.beginFill(testResult < 0 ? 0xeeeeee : this.diePalette()(testResult));
+          die.drawRect(dx, dy, dw, dh);
+          die.endFill();
+          die.interactive = true;
+          die.on("mousedown", function(e) {
+            if (self.clickHandler) {
+              var _die = e.target;
+              self.clickHandler({
+                source: _die,
+                data: self.waferdata,
+                point: e.data.global,
+                pick: function() {
+                  return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
+                }
+              });
+            }
+          });
+          die.on("mouseover", function(e) {
+            if (self.hoverInHandler) {
+              var _die = e.target;
+              self.hoverInHandler({
+                source: _die,
+                data: self.waferdata,
+                point: e.data.global,
+                pick: function() {
+                  return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
+                }
+              });
+            }
+          });
+          die.on("mouseout", function(e) {
+            if (self.hoverOutHandler) {
+              var _die = e.target;
+              self.hoverOutHandler({
+                source: _die,
+                data: self.waferdata,
+                point: e.data.global,
+                pick: function() {
+                  return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
+                }
+              });
+            }
+          });
+          this.dies.addChild(die);
+        }
+        dx += dw;
       }
-  	if(!this.app) {
-  		return;
-  	}
+      dy += dh;
+    }
+    this.app.stage.addChild(this.dies);
 
-  	this.dies = new Graphics();
-
-  	// width/height
-  	var w = this.diameter;
-  	var r = this.diameter / 2;
-  	var rm = (this.diameter - this.margin) / 2;
-  	
-  	// width/height: die
-  	var dw = this.dieWidth;
-  	var dh = this.dieHeight;
-
-  	var dx0 = (w - dw * this.waferdata.cols) / 2;
-  	var dy0 = (w - dh * this.waferdata.rows) / 2;
-  	if (this.notchSide == "left" || this.notchSide == "l") {
-  		dx0 += dw * this.notchOffset;
-  	}
-  	else if (this.notchSide == "right" || this.notchSide == "r") {
-  		dx0 -= dw * this.notchOffset;
-  	}
-  	else if (this.notchSide == "up" || this.notchSide == "u") {
-  		dy0 += dh * this.notchOffset;
-  	}
-  	else {
-  		dy0 -= dh * this.notchOffset;
-  	}
-
-      // grid: dies
-  	var self = this;
-  	var dy = dy0;
-  	for(var row = 0; row < this.waferdata.rows; row++) {
-  		var dx = dx0;
-  		for(var col = 0; col < this.waferdata.cols; col++) {
-  			var inCircle = this.checkBounding ? inside(dx, dy , dw, dh, r, r, rm) : true;
-
-  			// testResult: diff from 'testing' or 'counting'
-  			var testResult  = this.waferdata.testing(row, col);
-  			if(inCircle && testResult >= 0) {
-  				var die = new Graphics();
-  				die["info"] = {
-  					drawRow: row,
-  					drawCol: col,
-  					x: dx,
-  					y: dy
-  				};
-  				die.lineStyle(1, 0xcccccc, dw / 10);
-  				die.beginFill(testResult < 0 ? 0xeeeeee : this.diePalette()(testResult));
-  				die.drawRect(dx, dy, dw, dh);
-  				die.endFill();
-  				die.interactive = true;
-  				die.on("mousedown", function(e) {
-  					if(self.clickHandler) {
-  						var _die = e.target;
-  						self.clickHandler({
-  							source: _die,
-  							data: self.waferdata,
-  							point: e.data.global,
-  							pick: function() {
-  								return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
-  							}
-  						});
-  					}
-  				});
-  				die.on("mouseover", function(e) {
-  					if(self.hoverInHandler) {
-  						var _die = e.target;
-  						self.hoverInHandler({
-  							source: _die,
-  							data: self.waferdata,
-  							point: e.data.global,
-  							pick: function() {
-  								return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
-  							}
-  						});
-  					}
-  				});
-  				die.on("mouseout", function(e) {
-  					if(self.hoverOutHandler) {
-  						var _die = e.target;
-  						self.hoverOutHandler({
-  							source: _die,
-  							data: self.waferdata,
-  							point: e.data.global,
-  							pick: function() {
-  								return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
-  							}
-  						});
-  					}
-  				});
-  				this.dies.addChild(die);
-  			}
-  			dx += dw;
-  		}
-  		dy += dh;
-  	}
-  	this.app.stage.addChild(this.dies);
-
-  	this.app.render();
+    this.app.render();
   }
 
   function inside(x, y, w, h, cx, cy, r) {
-      var r2 = r * r;
-      return dist(x, y, cx, cy) < r2
-        && dist(x + w, y, cx, cy) < r2
-        && dist(x, y + h, cx, cy) < r2
-        && dist(x + w, y + h, cx, cy) < r2;
-  	}
-    
+    var r2 = r * r;
+    return dist(x, y, cx, cy) < r2 &&
+      dist(x + w, y, cx, cy) < r2 &&
+      dist(x, y + h, cx, cy) < r2 &&
+      dist(x + w, y + h, cx, cy) < r2;
+  }
+
   function dist(x, y, cx, cy) {
-      return (x - cx) * (x - cx) + (y - cy) * (y - cy);
+    return (x - cx) * (x - cx) + (y - cy) * (y - cy);
+  }
+
+  function shotmap_extract(type = "canvas") {
+    if (!this.app) {
+      return null;
+    }
+
+    if (type == "image") {
+      return this.app.renderer.plugins.extract.image(this.dies);
+    } else {
+      return this.app.renderer.plugins.extract.canvas(this.dies);
+    }
   }
 
   function shotmap_move(offsetX, offsetY, event) {
-    if(event == 'mousedown') {
-      this.lastPos = { 
-        x: offsetX, 
+    if (event == 'mousedown') {
+      this.lastPos = {
+        x: offsetX,
         y: offsetY
       };
-    }
-    else if(event == 'mousemove') {
-      if(this.lastPos) {
+    } else if (event == 'mousemove') {
+      if (this.lastPos) {
         var stage = this.app.stage;
         stage.x += (offsetX - this.lastPos.x);
         stage.y += (offsetY - this.lastPos.y);
-        this.lastPos = { 
-          x: offsetX, 
-          y: offsetY 
+        this.lastPos = {
+          x: offsetX,
+          y: offsetY
         };
         this.app.render();
       }
-    }
-    else {
+    } else {
       this.lastPos = null;
     }
   }
@@ -42758,8 +42935,8 @@
   }
 
   function shotmap_reset() {
-  	this.app.stage.x = 0;
-  	this.app.stage.y = 0;
+    this.app.stage.x = 0;
+    this.app.stage.y = 0;
     this.app.stage.scale.x = 1;
     this.app.stage.scale.y = 1;
 
@@ -42793,7 +42970,7 @@
   }
 
   function shotmap_wheel(enabled) {
-    if(arguments.length > 0) {
+    if (arguments.length > 0) {
       this.wheelEnabled = enabled;
       return this;
     }
@@ -42803,29 +42980,29 @@
   function shotmap_zoom_in(offsetX, offsetY) {
     var stage = this.app.stage;
     // center
-    if(offsetX === undefined) {
+    if (offsetX === undefined) {
       offsetX = stage.x + this.diameter * stage.scale.x / 2;
       offsetY = stage.y + this.diameter * stage.scale.y / 2;
     }
 
-  	var worldPos = {
-      x: (offsetX - stage.x) / stage.scale.x, 
+    var worldPos = {
+      x: (offsetX - stage.x) / stage.scale.x,
       y: (offsetY - stage.y) / stage.scale.y
     };
-  	var newScale = {
-      x: stage.scale.x * 2, 
+    var newScale = {
+      x: stage.scale.x * 2,
       y: stage.scale.y * 2
     };
-  	var newScreenPos = {
-      x: worldPos.x * newScale.x + stage.x, 
+    var newScreenPos = {
+      x: worldPos.x * newScale.x + stage.x,
       y: worldPos.y * newScale.y + stage.y
     };
-  	
-    stage.x -= (newScreenPos.x - offsetX) ;
-  	stage.y -= (newScreenPos.y - offsetY) ;
-  	stage.scale.x = newScale.x;
-  	stage.scale.y = newScale.y;
-    
+
+    stage.x -= (newScreenPos.x - offsetX);
+    stage.y -= (newScreenPos.y - offsetY);
+    stage.scale.x = newScale.x;
+    stage.scale.y = newScale.y;
+
     this.app.render();
 
     return this;
@@ -42834,29 +43011,29 @@
   function shotmap_zoom_out(offsetX, offsetY) {
     var stage = this.app.stage;
     // center
-    if(offsetX === undefined) {
+    if (offsetX === undefined) {
       offsetX = stage.x + this.diameter * stage.scale.x / 2;
       offsetY = stage.y + this.diameter * stage.scale.y / 2;
-    }	
+    }
 
     var worldPos = {
-      x: (offsetX - stage.x) / stage.scale.x, 
+      x: (offsetX - stage.x) / stage.scale.x,
       y: (offsetY - stage.y) / stage.scale.y
     };
-  	var newScale = {
-      x: stage.scale.x * 0.5, 
+    var newScale = {
+      x: stage.scale.x * 0.5,
       y: stage.scale.y * 0.5
     };
-  	var newScreenPos = {
-      x: worldPos.x * newScale.x + stage.x, 
+    var newScreenPos = {
+      x: worldPos.x * newScale.x + stage.x,
       y: worldPos.y * newScale.y + stage.y
     };
-  	
-    stage.x -= (newScreenPos.x - offsetX) ;
-  	stage.y -= (newScreenPos.y - offsetY) ;
-  	stage.scale.x = newScale.x;
-  	stage.scale.y = newScale.y;
-    
+
+    stage.x -= (newScreenPos.x - offsetX);
+    stage.y -= (newScreenPos.y - offsetY);
+    stage.scale.x = newScale.x;
+    stage.scale.y = newScale.y;
+
     this.app.render();
 
     return this;
@@ -42893,17 +43070,22 @@
     this.wheelEnabled = false;
     // drag
     this.dragEnabled = false;
+    //
+    this.dieRectEnabled = true;
   }
 
-  ShotMap.prototype = (function(){
+  ShotMap.prototype = (function() {
     return {
       constructor: ShotMap,
       attachClick: shotmap_attach_click,
       attachHoverIn: shotmap_attach_hover_in,
       attachHoverOut: shotmap_attach_hover_out,
+      blocking: shotmap_blocking,
       create: shotmap_create,
       data: shotmap_data,
       diePalette: shotmap_die_palette,
+      dieRect: shotmap_die_rect,
+      extract: shotmap_extract,
       drag: shotmap_drag,
       draw: shotmap_draw,
       move: shotmap_move,
@@ -42917,6 +43099,114 @@
     };
   }());
 
+  function maplegend_draw() {
+    // pixi
+    if (!this.app) {
+      this.app = new Application({
+        width: this.width,
+        height: this.height,
+        backgroundAlpha: 0,
+        autoStart: false
+      });
+
+      var div = document.getElementById(this.id());
+      div.setAttribute("style", "width:" + this.width + "px");
+      div.setAttribute("style", "height:" + this.height + "px");
+      div.appendChild(this.app.view);
+
+      if (this.gs) {
+        this.gs.destroy();
+      }
+
+      this.gs = new Graphics();
+      var x1 = 0;
+      for (var i = 1; i <= 10; i++) {
+        var x2 = 0.1 * this.width * i;
+
+        var color = new Graphics();
+        color.beginFill(this.ref[i]);
+        color.drawRect(x1, 0, x2 - x1, this.height);
+        color.endFill();
+        this.gs.addChild(color);
+
+        x1 = x2;
+      }
+
+      this.app.stage.addChild(this.gs);
+      this.app.render();
+    }
+
+    return this;
+  }
+
+  function maplegend_layer_count(layers) {
+    if (arguments.length == 0) {
+      return this.layers;
+    }
+
+    this.layers = Math.max(1, layers);
+    this.colors = [];
+    for (var i = 0; i <= this.layers; i++) {
+      this.colors.push(this.ref[Math.round(10 * i / this.layers)]);
+    }
+    return this;
+  }
+
+  /**
+   * sets wafer information.
+   * 
+   * @param {int} count The failed count.
+   */
+  function maplegend_select(count) {
+    return this.colors.length == 0 ?
+      0xffffff :
+      this.colors[Math.min(Math.max(0, count), this.colors.length)];
+  }
+
+  /**
+   * sets wafer information.
+   * 
+   * @param {int} diameter The size.
+   * @param {int} margin The margin size.
+   */
+  function maplegend_size(width, height) {
+    this.width = width;
+    this.height = height;
+    return this;
+  }
+
+  function maplegend(id) {
+    return new MapLegend(id);
+  }
+
+  /**
+   * The constructor.
+   * 
+   * @param {string} The id.
+   */
+  function MapLegend(id) {
+    var _id = id;
+    this.id = function() {
+      return _id;
+    };
+    this.width = 600;
+    this.height = 20;
+    this.layers = 1;
+    this.ref = [0xffffff, 0xd5e5fa, 0x92b0ff, 0x6271fd, 0x009c95, 0x64ff00, 0xc5ff30, 0xf7c50c, 0xf18008, 0xff1800, 0x990000];
+    this.colors = [0xffffff, 0x990000];
+  }
+
+  MapLegend.prototype = (function() {
+    return {
+      constructor: MapLegend,
+      draw: maplegend_draw,
+      layerCount: maplegend_layer_count,
+      select: maplegend_select,
+      size: maplegend_size
+    };
+  }());
+
+  exports.maplegend = maplegend;
   exports.shotmap = shotmap;
   exports.waferdata = waferdata;
 

@@ -1,5 +1,5 @@
 export default function(enabled) {
-  if(arguments.length > 0) {
+  if (arguments.length > 0) {
     this.wheelEnabled = enabled;
     return this;
   }

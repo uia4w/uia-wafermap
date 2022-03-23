@@ -1,5 +1,4 @@
 export default function(fHandler) {
-    this.clickHandler = fHandler;
-    return this;
+  this.clickHandler = fHandler;
+  return this;
 }
-  

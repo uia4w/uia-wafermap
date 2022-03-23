@@ -14,4 +14,3 @@ export default function(drawR, drawC) {
   })
   return data;
 }
-

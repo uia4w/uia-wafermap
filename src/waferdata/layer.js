@@ -11,12 +11,12 @@ export default function(id, resultTester, dataPicker) {
   var found = this.layers.find(function(layer) {
     return layer.id == id;
   });
-  
-  if(resultTester === undefined) {
+
+  if (resultTester === undefined) {
     return found;
   }
 
-  if(found == undefined) {
+  if (found == undefined) {
     this.layers.push(layer(id, this.shotmap, resultTester, dataPicker));
   }
   return this;

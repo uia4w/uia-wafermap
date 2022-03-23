@@ -12,10 +12,10 @@ import waferdata from '../waferdata/index';
  * @return {uia.WaferData} The wafer data.
  */
 export default function(maxRow, maxCol, minRow = 1, minCol = 1, origin = "leftdown", pickMode = "testing") {
-  if(origin == undefined || origin == null) {
+  if (origin == undefined || origin == null) {
     origin = "leftdown";
   }
-  if(pickMode == undefined || pickMode == null) {
+  if (pickMode == undefined || pickMode == null) {
     origin = "testing";
   }
   this.waferdata = waferdata(this, maxRow, maxCol, minRow, minCol, origin.toLowerCase(), pickMode.toLowerCase());

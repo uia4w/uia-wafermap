@@ -44,6 +44,8 @@ var shotmap = uia.shotmap('wafer2')         // element id
           return 0x00ff00;                  // green
         case 1:                             // fail
           return 0xff0000;                  // red
+        case 2:                             // good to bad
+          return 0xff0000;                  // red
         default:                            // unknown
           return 0xffffff;                  // white
       }
@@ -102,6 +104,63 @@ The output:
 ![example3](example3.png)
 
 
+### Example5
+Use some features of [OpenCV.js](https://docs.opencv.org/4.5.5/d5/d10/tutorial_js_root.html) to identify failed area.
+```js
+var shotmap = uia.shotmap('wafer2')
+    .size(600, 10)
+    .notch("down")
+    .wheel(false)
+    .drag(false)
+    .dieRect(false)                                 // turn off the grid line
+    .diePalette(function(value) {
+        switch (value) {
+            case 1:
+                return 0xff0000;
+            case 2:
+                return 0xff0000;
+            default:
+                return 0xffffff;                    // white background
+        }
+    });
+
+shotmap.data(101, 98, 1, 1, "leftdown", "counting")
+    .layer("1", layerResult1, layerData)
+    .layer("2", layerResult2, layerData);
+
+shotmap.create(true);
+// try to find out failed areas.
+var result = shotmap.blocking(
+  7,                                                // blur argument
+  0xffffff);                                        // ignore white color (background)
+
+// redraw
+var colors = ["red", "green", "blue", "gray", "lightgray"];
+var canvas = document.getElementById("canvasOutput");
+var ctx = canvas.getContext("2d");
+for (var y = 0; y < result.data.length; y++) {
+    var row = result.data[y];
+    for (var x = 0; x < row.length; x++) {
+        var aid = row[x];                           // area id
+        var area = result.areas[aid];               // area information
+        var rank = true || area.rank < 5;           // ranking
+        if (aid != 0 && rank) {
+            ctx.fillStyle = colors[area.rank % 5];
+            ctx.fillRect(x, y, 1, 1)
+            ctx.fill();
+        }
+    }
+}
+```
+
+
+The output:
+
+![example5-1](example5-1.png)
+
+![example5-2](example5-2.png)
+
+
 ## Documentation
 
 ### ShotMap
@@ -118,6 +177,10 @@ The output:
   }
   ```
 
+* __blocking__ (_int_ blur = 9, _int_ bg = null)
+  * The blur argument of OpenCV.js.
+  * The background color, ex: 0x00ff00. 
+
 * __create__ (_boolean_ checkBounding)
 
 * __data__ (_int_ maxX, _int_ maxY, _int_ minX = 1, _int_ maxY = 1, _string_ origin = "leftdown", _string_ pickMode = "testing"): ___WaferData___
@@ -128,6 +191,7 @@ The output:
   * testing - check if a die is pass or not.
   * counting - count the failure of number.
 
+* __dieRect__ (_boolean_ enabled)
 
 * __diePalette__ (_function_ pickerFunc)
   ```js
@@ -136,10 +200,13 @@ The output:
   }
   ```
 
-
 * __drag__ (_boolean_ enabled)
 
 * __draw__ (_boolean_ enabled))
+
+* __extract__ (_string_ type)
+  * canvas - output canvas object.
+  * image - output HTML image object.
 
 * __notch__ (_string_ direction)
 

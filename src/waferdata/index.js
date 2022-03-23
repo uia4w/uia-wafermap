@@ -21,18 +21,18 @@ function WaferData(shotmap, maxRow, maxCol, minRow, minCol, origin = "leftdown",
   this.rows = maxRow - minRow + 1;
   this.cols = maxCol - minCol + 1;
   this.layers = new Array();
-  
-  if(origin == "rightup" || origin == "ru") {
+
+  if (origin == "rightup" || origin == "ru") {
     this.pos = waferdata_right_up;
-  } else if(origin == "rightdown" || origin == "rd") {
+  } else if (origin == "rightdown" || origin == "rd") {
     this.pos = waferdata_right_down;
-  } else if(origin == "leftup" || origin == "lu") {
-      this.pos = waferdata_left_up;
+  } else if (origin == "leftup" || origin == "lu") {
+    this.pos = waferdata_left_up;
   } else {
     this.pos = waferdata_left_down;
   }
-  
-  if(pickMode == "counting") {
+
+  if (pickMode == "counting") {
     this.testing = waferdata_counting;
   } else {
     this.testing = waferdata_testing;

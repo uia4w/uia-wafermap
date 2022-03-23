@@ -1,10 +1,11 @@
-export default function(on) {
-    if(on === undefined) {
-        return this.on;
-    } else {
-        this.on = on;
-        this.shotmap.draw();
-        return this;
+export default function(on, redraw = true) {
+  if (on === undefined) {
+    return this.on;
+  } else {
+    this.on = on;
+    if (redraw) {
+      this.shotmap.draw();
     }
+    return this;
+  }
 }
-  
