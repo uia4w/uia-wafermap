@@ -26,30 +26,16 @@ function go() {
 
   shotmap.create(true);
   // try to find out failed areas.
+
+  var canvas = document.getElementById("canvasOutput");
   var result = shotmap.blocking(
     7, // blur parameter
     0xffffff); // ignore white color (background)
 
+  result.draw(canvas);
+
   // opencv result.
   // cv.imshow('canvasOutput', result.dst);
-
-  // redraw
-  var colors = ["red", "green", "blue", "gray", "lightgray"];
-  var canvas = document.getElementById("canvasOutput");
-  var ctx = canvas.getContext("2d");
-  for (var y = 0; y < result.data.length; y++) {
-    var row = result.data[y];
-    for (var x = 0; x < row.length; x++) {
-      var aid = row[x]; // area id
-      var area = result.areas[aid]; // area information
-      var rank = true || area.rank < 5; // ranking
-      if (aid != 0 && rank) {
-        ctx.fillStyle = colors[area.rank % 5];
-        ctx.fillRect(x, y, 1, 1)
-        ctx.fill();
-      }
-    }
-  }
 }
 
 function layerResult1(r, c) {

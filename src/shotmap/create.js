@@ -28,18 +28,19 @@ export default function(checkBounding = false) {
     div.appendChild(this.app.view);
 
     // circle
-    const map = new PIXI.Graphics();
     // circle: wafer
-    map.lineStyle(0);
-    map.beginFill(0x999999);
-    map.drawCircle(r, r, r);
-    map.endFill();
-    // circle: margin
-    map.beginFill(0xeeeeee);
-    map.drawCircle(r, r, rm);
-    map.endFill();
-
-    this.app.stage.addChild(map);
+    if (this.circleBackgroundEnabled) {
+      const map = new PIXI.Graphics();
+      map.lineStyle(0);
+      map.beginFill(0x999999);
+      map.drawCircle(r, r, r);
+      map.endFill();
+      // circle: margin
+      map.beginFill(0xeeeeee);
+      map.drawCircle(r, r, rm);
+      map.endFill();
+      this.app.stage.addChild(map);
+    }
 
     // zoom
     var self = this;

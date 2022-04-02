@@ -8,9 +8,10 @@
 </head>
 <body>
     <h3>Layers</h3>
-	<input type="checkbox" checked onchange="showLayer('1', this.checked);">All Good
-	<input type="checkbox" onchange="showLayer('2', this.checked);">All Bad
-	<input type="checkbox" checked onchange="showLayer('3', this.checked);">Random
+	<input type="checkbox" checked onchange="showLayer('1', this.checked);">Random Bad
+	<input type="checkbox" onchange="showLayer('2', this.checked);">All Good
+	<input type="checkbox" onchange="showLayer('3', this.checked);">Random Bad
+	<input type="checkbox" onchange="showLayer('4', this.checked);">Random Good
     <h3>Functions</h3>
 	<input type="checkbox" checked onchange="wheel(this.checked);">Wheel
 	<input type="checkbox" checked onchange="drag(this.checked);">Drag and Drop
@@ -20,6 +21,7 @@
 	<input type="button" onclick="reset();" value="Reset">
     <h3 id="position">Map</h3>
 	<div id="wafer2"></div>
+	
 	<script type="text/javascript" src="node_modules/pixi.js/dist/browser/pixi.js"></script>
 	<script type="text/javascript" src="dist/uia-wafermap.js"></script>
     <script type="text/javascript" src="example1.js"></script>

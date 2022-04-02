@@ -100,10 +100,12 @@ export default function(blur = 9, bg = null) {
   src.delete();
   dst.delete();
 
-  return {
+  var result = {
     data: data,
     areas: areas
   }
+  result["draw"] = output.bind(result);
+  return result;
 }
 
 function nav(src, x, y, background) {
@@ -112,6 +114,34 @@ function nav(src, x, y, background) {
   let b = src.ucharAt(y, x * src.channels() + 2);
   let rgb = r << 16 || g << 8 || b;
   return (background != null && background == rgb) || (r == 255 && g == 255 && b == 255) || (r == 0 && g == 0 && b == 0);
+}
+
+function output(canvas) {
+  if (this.data.length == 0) {
+    return;
+  }
+
+  var colors = ["red", "green", "blue", "gray", "lightgray"];
+  var ctx = canvas.getContext("2d");
+  ctx.canvas.height = this.data.length;
+  ctx.canvas.width = this.data[0].length;
+  for (var y = 0; y < this.data.length; y++) {
+    var row = this.data[y];
+    for (var x = 0; x < row.length; x++) {
+      var aid = row[x]; // area id
+      if (aid == 0) {
+        continue;
+      }
+      var area = this.areas[aid]; // area information
+      if (!area || area.rank >= 5) {
+        continue;
+      }
+
+      ctx.fillStyle = colors[area.rank];
+      ctx.fillRect(x, y, 1, 1)
+      ctx.fill();
+    }
+  }
 }
 
 function grouping(links) {

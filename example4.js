@@ -3,6 +3,7 @@ var legend = uia.maplegend('legend2')
   .draw();
 
 var shotmap = uia.shotmap('wafer2')
+  .circleBackground(false)
   .size(600, 10)
   .notch("down")
   .wheel(false)

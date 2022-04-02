@@ -2,7 +2,7 @@
  * merge the grade of all layers.
  * @param {int} drawR The r index of drawing.
  * @param {int} drawC c index of drawing.
- * @return {int) 0: pass, -1: unknown, others: fail.
+ * @return {int) 0:pass, 1:failed, 2:good to bad, 3:good to good, -1:unknown.
  */
 export default function(drawR, drawC) {
   var pos = this.pos(drawR, drawC);
@@ -16,11 +16,13 @@ export default function(drawR, drawC) {
     if (_layer.enabled()) {
       var code = _layer.result(rowOffset, colOffset);
       if (code >= 0) {
-        found = true;
         if (pass && code > 0) {
           return 2; // good to bad
+        } else if (pass && found) {
+          return 3; // test duo
         }
         pass = (code == 0);
+        found = true;
       }
     }
   }

@@ -2,6 +2,7 @@ import shotmap_attach_click from "./attachClick";
 import shotmap_attach_hover_in from "./attachHoverIn";
 import shotmap_attach_hover_out from "./attachHoverOut";
 import shotmap_blocking from "./blocking";
+import shotmap_circleBackground from "./circleBackground";
 import shotmap_create from "./create";
 import shotmap_data from "./data";
 import shotmap_die_palette from "./diePalette";
@@ -51,6 +52,7 @@ function ShotMap(id) {
   this.dragEnabled = false;
   //
   this.dieRectEnabled = true;
+  this.circleBackgroundEnabled = true;
 }
 
 ShotMap.prototype = (function() {
@@ -60,6 +62,7 @@ ShotMap.prototype = (function() {
     attachHoverIn: shotmap_attach_hover_in,
     attachHoverOut: shotmap_attach_hover_out,
     blocking: shotmap_blocking,
+    circleBackground: shotmap_circleBackground,
     create: shotmap_create,
     data: shotmap_data,
     diePalette: shotmap_die_palette,

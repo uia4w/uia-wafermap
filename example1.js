@@ -6,33 +6,47 @@ var shotmap = uia.shotmap('wafer2')
   .diePalette(function(value) {
     switch (value) {
       case 0:
+        return 0xdddddd;
+      case 1: // bad
+        return 0xff0000;
+      case 2: // good to bad
         return 0x00ff00;
-      case 1:
-        return 0xff0000;
-      case 2:
-        return 0xff0000;
+      case 3: // good to good
+        return 0x0000ff;
       default:
         return 0xffffff;
     }
   })
   .attachHoverIn(function(oEvent) {
-    document.getElementById("position").innerHTML = "Map " + oEvent.source.info.drawRow + "," + oEvent.source.info.drawCol;
+    var die = oEvent.source; // pixi.js graphics object
+    document.getElementById("position").innerHTML = "Map " + die.info.drawRow + "," + die.info.drawCol;
   })
   .attachHoverOut(function(oEvent) {
     document.getElementById("position").innerHTML = "Map";
   })
 
 var data = shotmap.data(101, 98, 1, 1)
-  .layer("1", 0, layerData)
-  .layer("2", 1, layerData)
-  .layer("3", layer3result, layerData);
+  .layer("1", layer1result, layerData)
+  .layer("2", 0, layerData)
+  .layer("3", layer3result, layerData)
+  .layer("4", layer4result, layerData);
 
 data.layer("2").enabled(false);
+data.layer("3").enabled(false);
+data.layer("4").enabled(false);
 
 shotmap.create(true);
 
+function layer1result() {
+  return Math.random() > 0.8 ? 1 : -1;
+}
+
 function layer3result() {
-  return Math.random() > 0.2 ? 0 : 1;
+  return Math.random() > 0.9 ? 1 : -1;
+}
+
+function layer4result() {
+  return Math.random() > 0.8 ? 0 : -1;
 }
 
 function layerData(row, col) {

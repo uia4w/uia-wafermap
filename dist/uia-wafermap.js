@@ -128,7 +128,7 @@
    * merge the grade of all layers.
    * @param {int} drawR The r index of drawing.
    * @param {int} drawC c index of drawing.
-   * @return {int) 0: pass, -1: unknown, others: fail.
+   * @return {int) 0:pass, 1:failed, 2:good to bad, 3:good to good, -1:unknown.
    */
   function waferdata_testing(drawR, drawC) {
     var pos = this.pos(drawR, drawC);
@@ -142,11 +142,13 @@
       if (_layer.enabled()) {
         var code = _layer.result(rowOffset, colOffset);
         if (code >= 0) {
-          found = true;
           if (pass && code > 0) {
             return 2; // good to bad
+          } else if (pass && found) {
+            return 3; // test duo
           }
           pass = (code == 0);
+          found = true;
         }
       }
     }
@@ -42570,10 +42572,12 @@
     src.delete();
     dst.delete();
 
-    return {
+    var result = {
       data: data,
       areas: areas
-    }
+    };
+    result["draw"] = output.bind(result);
+    return result;
   }
 
   function nav(src, x, y, background) {
@@ -42582,6 +42586,34 @@
     let b = src.ucharAt(y, x * src.channels() + 2);
     let rgb = r << 16 || g << 8 || b;
     return (background != null && background == rgb) || (r == 255 && g == 255 && b == 255) || (r == 0 && g == 0 && b == 0);
+  }
+
+  function output(canvas) {
+    if (this.data.length == 0) {
+      return;
+    }
+
+    var colors = ["red", "green", "blue", "gray", "lightgray"];
+    var ctx = canvas.getContext("2d");
+    ctx.canvas.height = this.data.length;
+    ctx.canvas.width = this.data[0].length;
+    for (var y = 0; y < this.data.length; y++) {
+      var row = this.data[y];
+      for (var x = 0; x < row.length; x++) {
+        var aid = row[x]; // area id
+        if (aid == 0) {
+          continue;
+        }
+        var area = this.areas[aid]; // area information
+        if (!area || area.rank >= 5) {
+          continue;
+        }
+
+        ctx.fillStyle = colors[area.rank];
+        ctx.fillRect(x, y, 1, 1);
+        ctx.fill();
+      }
+    }
   }
 
   function grouping(links) {
@@ -42621,6 +42653,14 @@
     }
   }
 
+  function shotmap_circleBackground(enabled) {
+    if (arguments.length > 0) {
+      this.circleBackgroundEnabled = enabled;
+      return this;
+    }
+    return this.circleBackgroundEnabled;
+  }
+
   /**
    * create shotmap without data
    * 
@@ -42649,18 +42689,19 @@
       div.appendChild(this.app.view);
 
       // circle
-      const map = new Graphics();
       // circle: wafer
-      map.lineStyle(0);
-      map.beginFill(0x999999);
-      map.drawCircle(r, r, r);
-      map.endFill();
-      // circle: margin
-      map.beginFill(0xeeeeee);
-      map.drawCircle(r, r, rm);
-      map.endFill();
-
-      this.app.stage.addChild(map);
+      if (this.circleBackgroundEnabled) {
+        const map = new Graphics();
+        map.lineStyle(0);
+        map.beginFill(0x999999);
+        map.drawCircle(r, r, r);
+        map.endFill();
+        // circle: margin
+        map.beginFill(0xeeeeee);
+        map.drawCircle(r, r, rm);
+        map.endFill();
+        this.app.stage.addChild(map);
+      }
 
       // zoom
       var self = this;
@@ -43072,6 +43113,7 @@
     this.dragEnabled = false;
     //
     this.dieRectEnabled = true;
+    this.circleBackgroundEnabled = true;
   }
 
   ShotMap.prototype = (function() {
@@ -43081,6 +43123,7 @@
       attachHoverIn: shotmap_attach_hover_in,
       attachHoverOut: shotmap_attach_hover_out,
       blocking: shotmap_blocking,
+      circleBackground: shotmap_circleBackground,
       create: shotmap_create,
       data: shotmap_data,
       diePalette: shotmap_die_palette,
