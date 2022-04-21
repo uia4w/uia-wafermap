@@ -3,11 +3,16 @@ export default function(type = "canvas") {
     return null;
   }
 
+  const bg = new PIXI.Graphics();
+  bg.beginFill(0xffffff);
+  bg.drawRect(0, 0, this.diameter, this.diameter);
+  bg.addChild(this.dies);
+
   if (type == "image") {
-    return this.app.renderer.plugins.extract.image(this.dies, "image/png");
-  } else if (type = "base64") {
-    return this.app.renderer.plugins.extract.base64(this.dies, "image/png");
+    return this.app.renderer.plugins.extract.image(bg, "image/png");
+  } else if (type == "base64") {
+    return this.app.renderer.plugins.extract.base64(bg, "image/png");
   } else {
-    return this.app.renderer.plugins.extract.canvas(this.dies);
+    return this.app.renderer.plugins.extract.canvas(bg);
   }
 }

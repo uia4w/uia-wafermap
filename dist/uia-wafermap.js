@@ -10,7 +10,7 @@
    * @param {int} drawC c index of drawing.
    * @return {int) 0: pass, -1: unknown, others: fail.
    */
-  function waferdata_counting(drawR, drawC) {
+  function waferdata_counting(drawR, drawC, dx, dy, dw, dh) {
     var pos = this.pos(drawR, drawC);
     var rowOffset = pos.row - this.minRow;
     var colOffset = pos.col - this.minCol;
@@ -20,7 +20,7 @@
     for (var i = 0; i < this.layers.length; i++) {
       var _layer = this.layers[i];
       if (_layer.enabled()) {
-        var fail = _layer.result(rowOffset, colOffset);
+        var fail = _layer.result(rowOffset, colOffset, dx, dy, dw, dh);
         if (fail >= 0) {
           found = true;
           result += fail;
@@ -70,8 +70,8 @@
      * @param {int} colOffset The column offset of min column. 
      * @returns 0: pass, 1: failed, -1: unknown.
      */
-    result: function(rowOffset, colOffset) {
-      return this.testResultF(rowOffset, colOffset);
+    result: function(rowOffset, colOffset, dx, dy, dw, dh) {
+      return this.testResultF(rowOffset, colOffset, dx, dy, dw, dh);
     },
 
     /**
@@ -80,8 +80,8 @@
      * @param {int} colOffset The column offset of min column. 
      * @returns {any} The information.
      */
-    data: function(rowOffset, colOffset) {
-      return this.dataPicker ? this.dataPicker(rowOffset, colOffset) : null;
+    data: function(rowOffset, colOffset, dx, dy, dw, dh) {
+      return this.dataPicker ? this.dataPicker(rowOffset, colOffset, dx, dy, dw, dh) : null;
     }
 
   };
@@ -94,17 +94,16 @@
    * @returns {uia.Layer} The layer object.
    */
   function waferdata_layer(id, resultTester, dataPicker) {
-    var found = this.layers.find(function(layer) {
-      return layer.id == id;
-    });
-
     if (resultTester === undefined) {
-      return found;
+      return this.layers.find(function(layer) {
+        return layer.id == id;
+      });
     }
 
-    if (found == undefined) {
-      this.layers.push(layer(id, this.shotmap, resultTester, dataPicker));
-    }
+    this.layers = this.layers.filter(function(layer) {
+      return layer.id != id;
+    });
+    this.layers.push(layer(id, this.shotmap, resultTester, dataPicker));
     return this;
   }
 
@@ -130,7 +129,7 @@
    * @param {int} drawC c index of drawing.
    * @return {int) 0:pass, 1:failed, 2:good to bad, 3:good to good, -1:unknown.
    */
-  function waferdata_testing(drawR, drawC) {
+  function waferdata_testing(drawR, drawC, dx, dy, dw, dh) {
     var pos = this.pos(drawR, drawC);
     var rowOffset = pos.row - this.minRow;
     var colOffset = pos.col - this.minCol;
@@ -140,7 +139,7 @@
     for (var i = 0; i < this.layers.length; i++) {
       var _layer = this.layers[i];
       if (_layer.enabled()) {
-        var code = _layer.result(rowOffset, colOffset);
+        var code = _layer.result(rowOffset, colOffset, dx, dy, dw, dh);
         if (code >= 0) {
           if (pass && code > 0) {
             return 2; // good to bad
@@ -42576,7 +42575,8 @@
       data: data,
       areas: areas
     };
-    result["draw"] = output.bind(result);
+    result["draw"] = __drawer.bind(result);
+    result["tester"] = __tester.bind(result);
     return result;
   }
 
@@ -42588,7 +42588,17 @@
     return (background != null && background == rgb) || (r == 255 && g == 255 && b == 255) || (r == 0 && g == 0 && b == 0);
   }
 
-  function output(canvas) {
+  function __tester(_row, _col, dx, dy, _dw, _dh) {
+    var row = this.data[Math.min(this.data.length - 1, parseInt(dy))];
+    var aid = row[Math.min(row.length - 1, parseInt(dx))]; 
+    if (aid == 0) {
+      return -1;
+    }
+    var area = this.areas[aid];
+    return area ? area.rank : -1;
+  }
+
+  function __drawer(canvas) {
     if (this.data.length == 0) {
       return;
     }
@@ -42855,7 +42865,7 @@
         var inCircle = this.checkBounding ? inside(dx, dy, dw, dh, r, r, rm) : true;
 
         // testResult: diff from 'testing' or 'counting'
-        var testResult = this.waferdata.testing(row, col);
+        var testResult = this.waferdata.testing(row, col, dx, dy, dw, dh);
         if (inCircle && testResult >= 0) {
           var die = new Graphics();
           die["info"] = {
@@ -42867,7 +42877,7 @@
           if (this.dieRectEnabled) {
             die.lineStyle(1, 0xcccccc, dw / 10);
           }
-          die.beginFill(testResult < 0 ? 0xeeeeee : this.diePalette()(testResult));
+          die.beginFill(testResult < 0 ? 0xeeeeee : this.diePalette()(testResult) || 0xeeeeee);
           die.drawRect(dx, dy, dw, dh);
           die.endFill();
           die.interactive = true;
@@ -42938,12 +42948,17 @@
       return null;
     }
 
+    const bg = new PIXI.Graphics();
+    bg.beginFill(0xffffff);
+    bg.drawRect(0, 0, this.diameter, this.diameter);
+    bg.addChild(this.dies);
+
     if (type == "image") {
-      return this.app.renderer.plugins.extract.image(this.dies, "image/png");
-    } else if (type = "base64") {
-      return this.app.renderer.plugins.extract.base64(this.dies, "image/png");
+      return this.app.renderer.plugins.extract.image(bg, "image/png");
+    } else if (type == "base64") {
+      return this.app.renderer.plugins.extract.base64(bg, "image/png");
     } else {
-      return this.app.renderer.plugins.extract.canvas(this.dies);
+      return this.app.renderer.plugins.extract.canvas(bg);
     }
   }
 

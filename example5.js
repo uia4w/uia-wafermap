@@ -1,9 +1,13 @@
+var shotmap = null;
+
+var waferdata = null;
+
 function onOpenCvReady() {
   cv['onRuntimeInitialized'] = () => go();
 }
 
 function go() {
-  var shotmap = uia.shotmap('wafer2')
+  shotmap = uia.shotmap('wafer2')
     .size(600, 10)
     .notch("down")
     .wheel(false)
@@ -20,19 +24,44 @@ function go() {
       }
     });
 
-  shotmap.data(101, 98, 1, 1, "leftdown", "counting")
-    .layer("1", layerResult1, layerData)
-    .layer("2", layerResult2, layerData);
+    waferdata = shotmap.data(101, 98, 1, 1, "leftdown", "counting")
+      .layer("1", layerResult1, layerData)
+      .layer("2", layerResult2, layerData);
 
   shotmap.create(true);
-  // try to find out failed areas.
+}
 
+function blocking() {
   var canvas = document.getElementById("canvasOutput");
   var result = shotmap.blocking(
     7, // blur parameter
     0xffffff); // ignore white color (background)
 
+  // try to find out failed areas.
   result.draw(canvas);
+
+  // layer: blocking
+  shotmap.diePalette(function(value) {
+    switch (value) {
+      case 0:
+        return 0xff0000;
+      case 1:
+        return 0x00ff00;
+      case 2:
+        return 0x0000ff;
+      case 3:
+        return 0xaaaaaa;
+      case 4:
+        return 0xcccccc;
+      default:
+        return undefined;
+    }
+  });
+  waferdata.layer("1").enabled(false);
+  waferdata.layer("2").enabled(false);
+  waferdata.layer("blocking", result.tester, layerData);
+  
+  shotmap.draw();
 
   // opencv result.
   // cv.imshow('canvasOutput', result.dst);

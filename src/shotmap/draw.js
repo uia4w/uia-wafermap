@@ -46,7 +46,7 @@ export default function() {
       dieR = Math.max(dieR, dist(dx + dw / 2, dy + dh / 2, r, r));
 
       // testResult: diff from 'testing' or 'counting'
-      var testResult = this.waferdata.testing(row, col);
+      var testResult = this.waferdata.testing(row, col, dx, dy, dw, dh);
       if (inCircle && testResult >= 0) {
         var die = new PIXI.Graphics();
         die["info"] = {
@@ -58,7 +58,7 @@ export default function() {
         if (this.dieRectEnabled) {
           die.lineStyle(1, 0xcccccc, dw / 10);
         }
-        die.beginFill(testResult < 0 ? 0xeeeeee : this.diePalette()(testResult));
+        die.beginFill(testResult < 0 ? 0xeeeeee : this.diePalette()(testResult) || 0xeeeeee);
         die.drawRect(dx, dy, dw, dh);
         die.endFill();
         die.interactive = true;
