@@ -104,7 +104,8 @@ export default function(blur = 9, bg = null) {
     data: data,
     areas: areas
   }
-  result["draw"] = output.bind(result);
+  result["draw"] = __drawer.bind(result);
+  result["tester"] = __tester.bind(result);
   return result;
 }
 
@@ -116,7 +117,17 @@ function nav(src, x, y, background) {
   return (background != null && background == rgb) || (r == 255 && g == 255 && b == 255) || (r == 0 && g == 0 && b == 0);
 }
 
-function output(canvas) {
+function __tester(_row, _col, dx, dy, _dw, _dh) {
+  var row = this.data[Math.min(this.data.length - 1, parseInt(dy))];
+  var aid = row[Math.min(row.length - 1, parseInt(dx))]; 
+  if (aid == 0) {
+    return -1;
+  }
+  var area = this.areas[aid];
+  return area ? area.rank : -1;
+}
+
+function __drawer(canvas) {
   if (this.data.length == 0) {
     return;
   }

@@ -28,8 +28,8 @@ Layer.prototype = {
    * @param {int} colOffset The column offset of min column. 
    * @returns 0: pass, 1: failed, -1: unknown.
    */
-  result: function(rowOffset, colOffset) {
-    return this.testResultF(rowOffset, colOffset);
+  result: function(rowOffset, colOffset, dx, dy, dw, dh) {
+    return this.testResultF(rowOffset, colOffset, dx, dy, dw, dh);
   },
 
   /**
@@ -38,8 +38,8 @@ Layer.prototype = {
    * @param {int} colOffset The column offset of min column. 
    * @returns {any} The information.
    */
-  data: function(rowOffset, colOffset) {
-    return this.dataPicker ? this.dataPicker(rowOffset, colOffset) : null;
+  data: function(rowOffset, colOffset, dx, dy, dw, dh) {
+    return this.dataPicker ? this.dataPicker(rowOffset, colOffset, dx, dy, dw, dh) : null;
   }
 
 }

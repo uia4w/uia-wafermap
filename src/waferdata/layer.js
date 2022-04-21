@@ -8,16 +8,15 @@ import layer from '../layer/index';
  * @returns {uia.Layer} The layer object.
  */
 export default function(id, resultTester, dataPicker) {
-  var found = this.layers.find(function(layer) {
-    return layer.id == id;
-  });
-
   if (resultTester === undefined) {
-    return found;
+    return this.layers.find(function(layer) {
+      return layer.id == id;
+    });
   }
 
-  if (found == undefined) {
-    this.layers.push(layer(id, this.shotmap, resultTester, dataPicker));
-  }
+  this.layers = this.layers.filter(function(layer) {
+    return layer.id != id;
+  });
+  this.layers.push(layer(id, this.shotmap, resultTester, dataPicker));
   return this;
 }
