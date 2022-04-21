@@ -23,9 +23,11 @@ export default function(checkBounding = false) {
     });
 
     var div = document.getElementById(this.id());
-    div.setAttribute("style", "width:" + w + "px");
-    div.setAttribute("style", "height:" + w + "px");
-    div.appendChild(this.app.view);
+    if (div) {
+      div.setAttribute("style", "width:" + w + "px");
+      div.setAttribute("style", "height:" + w + "px");
+      div.appendChild(this.app.view);
+    }
 
     // circle
     // circle: wafer
