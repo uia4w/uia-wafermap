@@ -35,6 +35,7 @@ data.layer("2").enabled(false);
 data.layer("3").enabled(false);
 data.layer("4").enabled(false);
 
+var dies = shotmap.scan();
 shotmap.create(true);
 
 function layer1result() {

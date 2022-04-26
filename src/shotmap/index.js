@@ -10,9 +10,12 @@ import shotmap_die_rect from "./dieRect";
 import shotmap_drag from "./drag";
 import shotmap_draw from "./draw";
 import shotmap_extract from "./extract";
+import shotmap_highlight from "./highlight";
 import shotmap_move from "./move";
 import shotmap_notch from "./notch";
 import shotmap_reset from "./reset";
+import shotmap_scan from "./scan";
+import shotmap_select_die from "./selectDie";
 import shotmap_size from "./size";
 import shotmap_wafer from "./wafer";
 import shotmap_wheel from "./wheel";
@@ -53,6 +56,8 @@ function ShotMap(id) {
   //
   this.dieRectEnabled = true;
   this.circleBackgroundEnabled = true;
+
+  this.highCode = null;
 }
 
 ShotMap.prototype = (function() {
@@ -70,9 +75,12 @@ ShotMap.prototype = (function() {
     extract: shotmap_extract,
     drag: shotmap_drag,
     draw: shotmap_draw,
+    highlight: shotmap_highlight,
     move: shotmap_move,
     notch: shotmap_notch,
     reset: shotmap_reset,
+    scan: shotmap_scan,
+    selectDie: shotmap_select_die,
     size: shotmap_size,
     wafer: shotmap_wafer,
     wheel: shotmap_wheel,

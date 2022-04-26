@@ -1,13 +1,14 @@
 /**
  * merge the grade of all layers.
- * @param {int} drawR The r index of drawing.
- * @param {int} drawC c index of drawing.
+ * @param {int} drawR The row index of drawing grid.
+ * @param {int} drawC The column index of drawing grid.
  * @return {int) 0:pass, 1:failed, 2:good to bad, 3:good to good, -1:unknown.
  */
 export default function(drawR, drawC, dx, dy, dw, dh) {
+  // find out die(row,col) at drawing(drawR,drawC)
   var pos = this.pos(drawR, drawC);
-  var rowOffset = pos.row - this.minRow;
-  var colOffset = pos.col - this.minCol;
+  var rowOffset = pos.row - this.minRow; // from zero
+  var colOffset = pos.col - this.minCol; // from zero
 
   var found = false;
   var pass = false;

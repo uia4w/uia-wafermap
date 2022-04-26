@@ -21,7 +21,19 @@ function MapLegend(id) {
   this.width = 600;
   this.height = 20;
   this.layers = 1;
-  this.ref = [0xffffff, 0xd5e5fa, 0x92b0ff, 0x6271fd, 0x009c95, 0x64ff00, 0xc5ff30, 0xf7c50c, 0xf18008, 0xff1800, 0x990000];
+  this.ref = [
+    0xffffff, //  0
+    0xd5e5fa, //  0-10
+    0x92b0ff, // 10-20
+    0x6271fd, // 20-30
+    0x009c95, // 30-40
+    0x64ff00, // 40-50
+    0xc5ff30, // 50-60
+    0xf7c50c, // 60-70
+    0xf18008, // 70-80
+    0xff1800, // 80-90
+    0x990000
+  ];
   this.colors = [0xffffff, 0x990000];
 }
 

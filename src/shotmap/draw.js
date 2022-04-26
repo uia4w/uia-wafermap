@@ -36,71 +36,20 @@ export default function() {
   }
 
   // grid: dies
-  var self = this;
   var dy = dy0;
-  var dieR = 0;
-  for (var row = 0; row < this.waferdata.rows; row++) {
+  for (var drawRow = 0; drawRow < this.waferdata.rows; drawRow++) {
     var dx = dx0;
-    for (var col = 0; col < this.waferdata.cols; col++) {
+    for (var drawCol = 0; drawCol < this.waferdata.cols; drawCol++) {
       var inCircle = this.checkBounding ? inside(dx, dy, dw, dh, r, r, rm) : true;
-      dieR = Math.max(dieR, dist(dx + dw / 2, dy + dh / 2, r, r));
 
-      // testResult: diff from 'testing' or 'counting'
-      var testResult = this.waferdata.testing(row, col, dx, dy, dw, dh);
+      // testResult: diff from 'testing', 'counting', 'bincode'
+      var testResult = this.waferdata.testing(drawRow, drawCol, dx, dy, dw, dh);
       if (inCircle && testResult >= 0) {
-        var die = new PIXI.Graphics();
-        die["info"] = {
-          drawRow: row,
-          drawCol: col,
-          x: dx,
-          y: dy
-        };
-        if (this.dieRectEnabled) {
-          die.lineStyle(1, 0xcccccc, dw / 10);
+        var color = testResult < 0 ? 0xeeeeee : this.diePalette()(testResult) || 0xeeeeee;
+        if (this.highCode != null && this.waferdata.bincode(drawRow, drawCol, dx, dy, dw, dh) == this.highCode) {
+          color = this.highColor;
         }
-        die.beginFill(testResult < 0 ? 0xeeeeee : this.diePalette()(testResult) || 0xeeeeee);
-        die.drawRect(dx, dy, dw, dh);
-        die.endFill();
-        die.interactive = true;
-        die.on("mousedown", function(e) {
-          if (self.clickHandler) {
-            var _die = e.target;
-            self.clickHandler({
-              source: _die,
-              data: self.waferdata,
-              point: e.data.global,
-              pick: function() {
-                return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
-              }
-            });
-          }
-        });
-        die.on("mouseover", function(e) {
-          if (self.hoverInHandler) {
-            var _die = e.target;
-            self.hoverInHandler({
-              source: _die,
-              data: self.waferdata,
-              point: e.data.global,
-              pick: function() {
-                return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
-              }
-            });
-          }
-        });
-        die.on("mouseout", function(e) {
-          if (self.hoverOutHandler) {
-            var _die = e.target;
-            self.hoverOutHandler({
-              source: _die,
-              data: self.waferdata,
-              point: e.data.global,
-              pick: function() {
-                return self.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
-              }
-            });
-          }
-        });
+        var die = createDie(this, drawRow, drawCol, dx, dy, dw, dh, color);
         this.dies.addChild(die);
       }
       dx += dw;
@@ -110,6 +59,63 @@ export default function() {
   this.app.stage.addChild(this.dies);
 
   this.app.render();
+}
+
+function createDie(map, drawRow, drawCol, dx, dy, dw, dh, color) {
+  var die = new PIXI.Graphics();
+  die["info"] = {
+    drawRow: drawRow,
+    drawCol: drawCol,
+    x: dx,
+    y: dy
+  };
+  if (map.dieRectEnabled) {
+    die.lineStyle(1, 0xcccccc, dw / 10);
+  }
+  die.beginFill(color);
+  die.drawRect(dx, dy, dw, dh);
+  die.endFill();
+  die.interactive = true;
+  die.on("mousedown", function(e) {
+    if (map.clickHandler) {
+      var _die = e.target;
+      map.clickHandler({
+        source: _die,
+        data: map.waferdata,
+        point: e.data.global,
+        pick: function() {
+          return map.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
+        }
+      });
+    }
+  });
+  die.on("mouseover", function(e) {
+    if (map.hoverInHandler) {
+      var _die = e.target;
+      map.hoverInHandler({
+        source: _die,
+        data: map.waferdata,
+        point: e.data.global,
+        pick: function() {
+          return map.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
+        }
+      });
+    }
+  });
+  die.on("mouseout", function(e) {
+    if (map.hoverOutHandler) {
+      var _die = e.target;
+      map.hoverOutHandler({
+        source: _die,
+        data: map.waferdata,
+        point: e.data.global,
+        pick: function() {
+          return map.waferdata.pick(_die.info.drawRow, _die.info.drawCol);
+        }
+      });
+    }
+  });
+  return die;
 }
 
 function inside(x, y, w, h, cx, cy, r) {

@@ -6,11 +6,10 @@
  */
 export default function(drawR, drawC) {
   var data = [];
+  // find out die(row,col) at drawing(drawR,drawC)
   var pos = this.pos(drawR, drawC);
   this.layers.forEach(l => {
-    var rowOffset = pos.row - this.minRow;
-    var colOffset = pos.col - this.minCol;
-    data.push(l.data(rowOffset, colOffset));
+    data.push(l.data(pos.row - this.minRow, pos.col - this.minCol));
   })
   return data;
 }

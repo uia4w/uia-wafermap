@@ -16,11 +16,12 @@ var shotmap = uia.shotmap('wafer2')
     }
   })
   .attachClick(function(oEvent) { // click event of the die
-    alert(oEvent.pick()[0]);
+    var pick = oEvent.pick();
+    shotmap.selectDie(pick[0].row, pick[0].col);
   })
 
 
-var data = shotmap.data(101, 98, 1, 1, "leftdown", "testing")
+var data = shotmap.data(101, 98, 1, 1, "rightDown", "testing")
   .layer("1", layerResult, layerData)
   .layer("2", layerResult, layerData);
 
@@ -30,8 +31,11 @@ function layerResult() {
   return Math.random() > 0.2 ? 0 : 1;
 }
 
-function layerData(row, col) {
-  return "" + row + "," + col;
+function layerData(rowOffset, colOffset) {
+  return {
+    row: rowOffset + 1,
+    col: colOffset + 1
+  }
 }
 
 function showLayer(id, enabled) {
