@@ -284,11 +284,13 @@
               die.type = die.type + "Good";
             }
             die.pass = true;
+            die.data = null;
           } else {
             if (die.pass) {
               die.type = "GoodBad";
             }
             die.pass = false;
+            die.data = _layer.data(rowOffset, colOffset);
           }
         }
         if (die.code >= 0) {
@@ -42684,7 +42686,7 @@
       data: data,
       areas: areas
     };
-    result["draw"] = __drawer.bind(result);
+    result["draw"] = __draw.bind(result);
     result["tester"] = __tester.bind(result);
     return result;
   }
@@ -42699,7 +42701,7 @@
 
   function __tester(_row, _col, dx, dy, _dw, _dh) {
     var row = this.data[Math.min(this.data.length - 1, parseInt(dy))];
-    var aid = row[Math.min(row.length - 1, parseInt(dx))]; 
+    var aid = row[Math.min(row.length - 1, parseInt(dx))];
     if (aid == 0) {
       return -1;
     }
@@ -42707,7 +42709,7 @@
     return area ? area.rank : -1;
   }
 
-  function __drawer(canvas) {
+  function __draw(canvas) {
     if (this.data.length == 0) {
       return;
     }

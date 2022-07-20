@@ -30,11 +30,13 @@ export default function() {
             die.type = die.type + "Good";
           }
           die.pass = true;
+          die.data = null;
         } else {
           if (die.pass) {
             die.type = "GoodBad";
           }
           die.pass = false;
+          die.data = _layer.data(rowOffset, colOffset);
         }
       }
       if (die.code >= 0) {
