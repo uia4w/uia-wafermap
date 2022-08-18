@@ -28,6 +28,15 @@ npm run test
 npm run build
 ```
 
+## Develop
+### How to Draw the Map
+
+* graphics coordination from TopLeft(0,0) to BottomRight(row,col) (_NOT die coordination_)
+* layers
+
+![map_color_model](map_color_model.png)
+
+
 ## Examples
 ### Example1
 ```js
