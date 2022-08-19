@@ -18,7 +18,7 @@ export default function(maxRow, maxCol, minRow = 1, minCol = 1, origin = "leftdo
   if (pickMode == undefined || pickMode == null) {
     origin = "testing";
   }
-  this.waferdata = waferdata(this, maxRow, maxCol, minRow, minCol, origin.toLowerCase(), pickMode.toLowerCase());
+  this.waferdata = waferdata(this, maxRow, maxCol, minRow, minCol, origin.toLowerCase(), pickMode);
   var w = 0.94 * (this.diameter - this.margin);
   this.dieWidth = w / this.waferdata.cols;
   this.dieHeight = w / this.waferdata.rows;

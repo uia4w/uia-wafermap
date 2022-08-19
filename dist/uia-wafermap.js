@@ -329,7 +329,10 @@
       this.posR = waferdata_left_down_r;
     }
 
-    if (pickMode == "counting") {
+    if (typeof pickMode === 'function') {
+      pickMode.bind(this);
+      this.testing = pickMode;
+    } else if (pickMode == "counting") {
       this.testing = waferdata_counting;
     } else if (pickMode == "bincode") {
       this.testing = waferdata_bincode;
@@ -42891,7 +42894,7 @@
     if (pickMode == undefined || pickMode == null) {
       origin = "testing";
     }
-    this.waferdata = waferdata(this, maxRow, maxCol, minRow, minCol, origin.toLowerCase(), pickMode.toLowerCase());
+    this.waferdata = waferdata(this, maxRow, maxCol, minRow, minCol, origin.toLowerCase(), pickMode);
     var w = 0.94 * (this.diameter - this.margin);
     this.dieWidth = w / this.waferdata.cols;
     this.dieHeight = w / this.waferdata.rows;

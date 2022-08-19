@@ -42,7 +42,10 @@ function WaferData(shotmap, maxRow, maxCol, minRow, minCol, origin = "leftdown",
     this.posR = waferdata_left_down_r;
   }
 
-  if (pickMode == "counting") {
+  if (typeof pickMode === 'function') {
+    pickMode.bind(this);
+    this.testing = pickMode;
+  } else if (pickMode == "counting") {
     this.testing = waferdata_counting;
   } else if (pickMode == "bincode") {
     this.testing = waferdata_bincode;
