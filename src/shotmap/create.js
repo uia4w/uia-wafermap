@@ -24,6 +24,12 @@ export default function(checkBounding = false) {
 
     var div = document.getElementById(this.id());
     if (div) {
+      var child = div.lastChild;
+      while (child) {
+        div.removeChild(child);
+        child = div.lastChild;
+      }
+
       div.setAttribute("style", "width:" + w + "px");
       div.setAttribute("style", "height:" + w + "px");
       div.appendChild(this.app.view);

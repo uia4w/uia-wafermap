@@ -98,6 +98,10 @@
       return this.testResultF(rowOffset, colOffset, dx, dy, dw, dh);
     },
 
+    resultX: function(x, y, dx, dy, dw, dh) {
+      return this.testResultF(x, y, dx, dy, dw, dh);
+    },
+
     /**
      * Get information from die matrix.
      * @param {int} rowOffset The row offset of min row.
@@ -42809,6 +42813,12 @@
 
       var div = document.getElementById(this.id());
       if (div) {
+        var child = div.lastChild;
+        while (child) {
+          div.removeChild(child);
+          child = div.lastChild;
+        }
+
         div.setAttribute("style", "width:" + w + "px");
         div.setAttribute("style", "height:" + w + "px");
         div.appendChild(this.app.view);
