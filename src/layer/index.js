@@ -1,13 +1,13 @@
 import layer_enabled from './enabled';
 
-export default function(id, shotmap, testResult, dataPicker) {
-  return new Layer(id, shotmap, testResult, dataPicker);
+export default function(id, shotmap, testResult, dataPicker, on) {
+  return new Layer(id, shotmap, testResult, dataPicker, on);
 }
 
-function Layer(id, shotmap, testResult, dataPicker = undefined) {
+function Layer(id, shotmap, testResult, dataPicker = undefined, on = true) {
   this.id = id;
   this.shotmap = shotmap;
-  this.on = true;
+  this.on = on;
   if (typeof testResult === "function") {
     this.testResultF = testResult;
   } else {

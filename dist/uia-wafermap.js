@@ -66,14 +66,14 @@
     }
   }
 
-  function layer(id, shotmap, testResult, dataPicker) {
-    return new Layer(id, shotmap, testResult, dataPicker);
+  function layer(id, shotmap, testResult, dataPicker, on) {
+    return new Layer(id, shotmap, testResult, dataPicker, on);
   }
 
-  function Layer(id, shotmap, testResult, dataPicker = undefined) {
+  function Layer(id, shotmap, testResult, dataPicker = undefined, on = true) {
     this.id = id;
     this.shotmap = shotmap;
-    this.on = true;
+    this.on = on;
     if (typeof testResult === "function") {
       this.testResultF = testResult;
     } else {
@@ -121,7 +121,7 @@
    * @param {function} dataPicker The data picker.
    * @returns {uia.Layer} The layer object.
    */
-  function waferdata_layer(id, resultTester, dataPicker) {
+  function waferdata_layer(id, resultTester, dataPicker, on = true) {
     if (resultTester === undefined) {
       return this.layers.find(function(layer) {
         return layer.id == id;
@@ -131,7 +131,7 @@
     this.layers = this.layers.filter(function(layer) {
       return layer.id != id;
     });
-    this.layers.push(layer(id, this.shotmap, resultTester, dataPicker));
+    this.layers.push(layer(id, this.shotmap, resultTester, dataPicker, on));
     return this;
   }
 
