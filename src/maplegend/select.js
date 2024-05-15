@@ -1,10 +1,11 @@
 /**
  * sets wafer information.
  * 
- * @param {int} count The failed count.
+ * @param {int} value The value.
  */
-export default function(count) {
+export default function(value) {
+  var idx = Math.floor(this.colors.length * (value - this.min) / (this.max - this.min));
   return this.colors.length == 0 ?
     0xffffff :
-    this.colors[Math.min(Math.max(0, count), this.colors.length)];
+    this.colors[Math.min(Math.max(0, idx), this.colors.length - 1)];
 }

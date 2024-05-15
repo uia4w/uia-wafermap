@@ -1,11 +1,12 @@
 import maplegend_draw from "./draw";
-import maplegend_layer_count from "./layerCount";
+import maplegend_range from "./range";
 import maplegend_select from "./select";
 import maplegend_size from "./size";
+import maplegend_palette from "./palette";
 
 
-export default function maplegend(id) {
-  return new MapLegend(id);
+export default function maplegend(id, pattern = 0) {
+  return new MapLegend(id, pattern);
 }
 
 /**
@@ -13,15 +14,16 @@ export default function maplegend(id) {
  * 
  * @param {string} The id.
  */
-function MapLegend(id) {
+function MapLegend(id, pattern) {
   var _id = id;
   this.id = function() {
     return _id;
   };
   this.width = 600;
   this.height = 20;
-  this.layers = 1;
-  this.ref = [
+  this.min = -1;
+  this.max = 4;
+  this.colors = pattern == 0 ? [
     0xffffff, //  0
     0xd5e5fa, //  0-10
     0x92b0ff, // 10-20
@@ -33,15 +35,38 @@ function MapLegend(id) {
     0xf18008, // 70-80
     0xff1800, // 80-90
     0x990000
+  ] : [
+    0xFF4A00,
+    0xFF4A00,
+    0xFFAE00,
+    0xFFAE00,
+    0xDCFF00,
+    0xDCFF00,
+    0x68FF00,
+    0x68FF00,
+    0x00FF7F,
+    0x00FF7F,
+    0x009900,
+    0x009900,
+    0x00FFF4,
+    0x00FFF4,
+    0x0097FF,
+    0x0097FF,
+    0x0023FF,
+    0x0023FF,
+    0x5100FF,
+    0x5100FF,
+    0xC500FF,
+    0xC500FF
   ];
-  this.colors = [0xffffff, 0x990000];
 }
 
 MapLegend.prototype = (function() {
   return {
     constructor: MapLegend,
     draw: maplegend_draw,
-    layerCount: maplegend_layer_count,
+    range: maplegend_range,
+    palette: maplegend_palette,
     select: maplegend_select,
     size: maplegend_size
   };

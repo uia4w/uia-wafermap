@@ -43424,11 +43424,11 @@
 
       this.gs = new Graphics();
       var x1 = 0;
-      for (var i = 1; i <= 10; i++) {
-        var x2 = 0.1 * this.width * i;
+      for (var i = 0; i < this.colors.length; i++) {
+        var x2 = (i + 1) * this.width / this.colors.length;
 
         var color = new Graphics();
-        color.beginFill(this.ref[i]);
+        color.beginFill(this.colors[i]);
         color.drawRect(x1, 0, x2 - x1, this.height);
         color.endFill();
         this.gs.addChild(color);
@@ -43443,28 +43443,22 @@
     return this;
   }
 
-  function maplegend_layer_count(layers) {
-    if (arguments.length == 0) {
-      return this.layers;
-    }
-
-    this.layers = Math.max(1, layers);
-    this.colors = [];
-    for (var i = 0; i <= this.layers; i++) {
-      this.colors.push(this.ref[Math.ceil(10 * i / this.layers)]);
-    }
+  function maplegend_range(min, max) {
+    this.min = min;
+    this.max = max;
     return this;
   }
 
   /**
    * sets wafer information.
    * 
-   * @param {int} count The failed count.
+   * @param {int} value The value.
    */
-  function maplegend_select(count) {
+  function maplegend_select(value) {
+    var idx = Math.floor(this.colors.length * (value - this.min) / (this.max - this.min));
     return this.colors.length == 0 ?
       0xffffff :
-      this.colors[Math.min(Math.max(0, count), this.colors.length)];
+      this.colors[Math.min(Math.max(0, idx), this.colors.length - 1)];
   }
 
   /**
@@ -43479,8 +43473,22 @@
     return this;
   }
 
-  function maplegend(id) {
-    return new MapLegend(id);
+  /**
+   * sets wafer information.
+   * 
+   * @param {array} palette The colors.
+   */
+  function maplegend_palette(colors) {
+    if (arguments.length == 0) {
+      return this.colors;
+    } else {
+      this.colors = colors;
+      return this;
+    }
+  }
+
+  function maplegend(id, pattern = 0) {
+    return new MapLegend(id, pattern);
   }
 
   /**
@@ -43488,15 +43496,16 @@
    * 
    * @param {string} The id.
    */
-  function MapLegend(id) {
+  function MapLegend(id, pattern) {
     var _id = id;
     this.id = function() {
       return _id;
     };
     this.width = 600;
     this.height = 20;
-    this.layers = 1;
-    this.ref = [
+    this.min = -1;
+    this.max = 4;
+    this.colors = pattern == 0 ? [
       0xffffff, //  0
       0xd5e5fa, //  0-10
       0x92b0ff, // 10-20
@@ -43508,15 +43517,38 @@
       0xf18008, // 70-80
       0xff1800, // 80-90
       0x990000
+    ] : [
+      0xFF4A00,
+      0xFF4A00,
+      0xFFAE00,
+      0xFFAE00,
+      0xDCFF00,
+      0xDCFF00,
+      0x68FF00,
+      0x68FF00,
+      0x00FF7F,
+      0x00FF7F,
+      0x009900,
+      0x009900,
+      0x00FFF4,
+      0x00FFF4,
+      0x0097FF,
+      0x0097FF,
+      0x0023FF,
+      0x0023FF,
+      0x5100FF,
+      0x5100FF,
+      0xC500FF,
+      0xC500FF
     ];
-    this.colors = [0xffffff, 0x990000];
   }
 
   MapLegend.prototype = (function() {
     return {
       constructor: MapLegend,
       draw: maplegend_draw,
-      layerCount: maplegend_layer_count,
+      range: maplegend_range,
+      palette: maplegend_palette,
       select: maplegend_select,
       size: maplegend_size
     };

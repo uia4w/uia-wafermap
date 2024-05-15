@@ -21,11 +21,11 @@ export default function() {
 
     this.gs = new PIXI.Graphics();
     var x1 = 0;
-    for (var i = 1; i <= 10; i++) {
-      var x2 = 0.1 * this.width * i;
+    for (var i = 0; i < this.colors.length; i++) {
+      var x2 = (i + 1) * this.width / this.colors.length;
 
       var color = new PIXI.Graphics();
-      color.beginFill(this.ref[i]);
+      color.beginFill(this.colors[i]);
       color.drawRect(x1, 0, x2 - x1, this.height);
       color.endFill();
       this.gs.addChild(color);

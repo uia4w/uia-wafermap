@@ -1,5 +1,5 @@
-var legend = uia.maplegend('legend2')
-  .layerCount(12)
+var legend = uia.maplegend('legend2', 1)
+  .range(0, 12)
   .draw();
 
 var shotmap = uia.shotmap('wafer2')
